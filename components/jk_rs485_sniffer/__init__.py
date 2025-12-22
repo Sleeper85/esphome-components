@@ -1,3 +1,7 @@
+# Updated : 2025.12.22
+# Version : 1.1.1
+# GitHub  : https://github.com/Sleeper85/esphome-components
+
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart
@@ -6,6 +10,7 @@ from esphome import pins
 from esphome.core import CORE
 
 DEPENDENCIES = ["uart"]
+CODEOWNERS = ["@txubelaxu","@Sleeper85"]
 MULTI_CONF = True
 CONF_JK_RS485_SNIFFER_ID = "jk_rs485_sniffer_id"
 CONF_RX_TIMEOUT = "rx_timeout"

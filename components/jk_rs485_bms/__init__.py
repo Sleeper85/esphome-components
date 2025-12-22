@@ -1,12 +1,15 @@
+# Updated : 2025.12.22
+# Version : 1.1.1
+# GitHub  : https://github.com/Sleeper85/esphome-components
+
 import esphome.codegen as cg
 from esphome.components import jk_rs485_sniffer
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
-
 from ..jk_rs485_sniffer import CONF_JK_RS485_SNIFFER_ID, JK_RS485_SNIFFER_COMPONENT_SCHEMA, jk_rs485_sniffer_ns
 
+CODEOWNERS = ["@syssi","@txubelaxu","@Sleeper85"]
 AUTO_LOAD = ["jk_rs485_sniffer", "binary_sensor", "sensor", "switch", "text_sensor"]
-CODEOWNERS = ["@syssi"]
 MULTI_CONF = True
 
 CONF_JK_RS485_BMS_ID = "jk_rs485_bms_id"

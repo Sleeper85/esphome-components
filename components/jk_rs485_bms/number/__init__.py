@@ -1,5 +1,5 @@
-# Updated : 2025.12.22
-# Version : 1.1.4
+# Updated : 2026.01.13
+# Version : 1.1.5
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -422,7 +422,7 @@ CONFIG_SCHEMA = JK_RS485_BMS_COMPONENT_SCHEMA.extend(
         cv.Optional(CONF_BATTERY_CAPACITY_TOTAL_SETTINGS): JK_RS485_NUMBER_SCHEMA.extend(
             { 
                 cv.Optional(CONF_MIN_VALUE, default=0): cv.float_,
-                cv.Optional(CONF_MAX_VALUE, default=1000): cv.float_,
+                cv.Optional(CONF_MAX_VALUE, default=3000): cv.float_,
                 cv.Optional(CONF_STEP, default=0.001): cv.float_,
                 cv.Optional(CONF_UNIT_OF_MEASUREMENT, default=UNIT_AMPERE_HOURS): cv.string_strict,
                 cv.Optional(CONF_ICON, default=ICON_BATTERY_CAPACITY_TOTAL_SETTING): cv.icon,

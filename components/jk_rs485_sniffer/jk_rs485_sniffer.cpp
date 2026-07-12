@@ -1,5 +1,5 @@
-// Updated : 2025.01.25
-// Version : 1.1.1
+// Updated : 2026.07.12
+// Version : 1.1.2
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -489,7 +489,7 @@ bool JkRS485Sniffer::calculate_next_pooling(void)
   if (found==true)
   {
     const uint32_t now=millis();
-    ESP_LOGI(TAG, "POOLING NEXT AVAILABLE... [address:0x%02X] @ %d [%u,%u,%u]",
+    ESP_LOGI(TAG, "POOLING NEXT AVAILABLE... [address:0x%02X] @ %d [%lu,%lu,%lu]",
                   this->pooling_index.node_address,this->pooling_index.frame_type,
                   now-this->rs485_network_node[this->pooling_index.node_address].last_device_settings_request_received_OK,
                   now-this->rs485_network_node[this->pooling_index.node_address].last_cell_info_request_received_OK,

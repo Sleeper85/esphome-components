@@ -675,7 +675,6 @@ std::string JkRS485Sniffer::nodes_available_to_string() {
         }
     }
     
-    bufferHex.push_back('\0'); // Agregar el carácter nulo al final de la cadena
     this->nodes_available_number=number_of_nodes_available;
     return bufferHex;
 }

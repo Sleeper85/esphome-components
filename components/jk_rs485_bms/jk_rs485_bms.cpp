@@ -651,12 +651,25 @@ void JkRS485Bms::decode_jk02_cell_info_(const std::vector<uint8_t> &data) {
 
   ESP_LOGVV(TAG, "Debug point 001");
   this->publish_state_(this->cell_count_real_sensor_, (float) cell_count_real);
-  this->publish_state_(this->cell_voltage_min_sensor_, cell_voltage_min);
-  this->publish_state_(this->cell_voltage_max_sensor_, cell_voltage_max);
-  this->publish_state_(this->cell_resistance_min_sensor_, cell_resistance_min);
-  this->publish_state_(this->cell_resistance_max_sensor_, cell_resistance_max);
-  this->publish_state_(this->cell_resistance_max_cell_number_sensor_, (float) cell_resistance_max_cell_number+1);
-  this->publish_state_(this->cell_resistance_min_cell_number_sensor_, (float) cell_resistance_min_cell_number+1);
+  // Without any cell reporting a voltage, min/max still hold their initial sentinel values
+  if (cell_count_real > 0)
+  {
+    this->publish_state_(this->cell_voltage_min_sensor_, cell_voltage_min);
+    this->publish_state_(this->cell_voltage_max_sensor_, cell_voltage_max);
+    this->publish_state_(this->cell_resistance_min_sensor_, cell_resistance_min);
+    this->publish_state_(this->cell_resistance_max_sensor_, cell_resistance_max);
+    this->publish_state_(this->cell_resistance_max_cell_number_sensor_, (float) cell_resistance_max_cell_number+1);
+    this->publish_state_(this->cell_resistance_min_cell_number_sensor_, (float) cell_resistance_min_cell_number+1);
+  }
+  else
+  {
+    this->publish_state_(this->cell_voltage_min_sensor_, NAN);
+    this->publish_state_(this->cell_voltage_max_sensor_, NAN);
+    this->publish_state_(this->cell_resistance_min_sensor_, NAN);
+    this->publish_state_(this->cell_resistance_max_sensor_, NAN);
+    this->publish_state_(this->cell_resistance_max_cell_number_sensor_, NAN);
+    this->publish_state_(this->cell_resistance_min_cell_number_sensor_, NAN);
+  }
   ESP_LOGVV(TAG, "Debug point 002");
 
   //ESP_LOGV(TAG, "Cell MAX voltage:    %f", cell_voltage_max);
@@ -1524,6 +1537,14 @@ void JkRS485Bms::publish_device_unavailable_()
   this->publish_state_(cell_voltage_max_sensor_, NAN);
   this->publish_state_(cell_voltage_min_cell_number_sensor_, NAN);
   this->publish_state_(cell_voltage_max_cell_number_sensor_, NAN);
+  this->publish_state_(cell_resistance_min_sensor_, NAN);
+  this->publish_state_(cell_resistance_max_sensor_, NAN);
+  this->publish_state_(cell_resistance_min_cell_number_sensor_, NAN);
+  this->publish_state_(cell_resistance_max_cell_number_sensor_, NAN);
+  this->publish_state_(battery_capacity_state_of_charge_sensor_, NAN);
+  this->publish_state_(battery_soh_valuation_sensor_, NAN);
+  this->publish_state_(balancing_current_sensor_, NAN);
+  this->publish_state_(balancing_direction_sensor_, NAN);
   this->publish_state_(cell_delta_voltage_sensor_, NAN);
   this->publish_state_(cell_average_voltage_sensor_, NAN);
   this->publish_state_(temperature_powertube_sensor_, NAN);
@@ -1603,9 +1624,10 @@ void JkRS485Bms::publish_state_(sensor::Sensor *sensor, float value) {
     return;
   }
   ESP_LOGVV(TAG, "Debug point 101 (--> %f)", value);
-  if (std::isnan(value) || std::isinf(value))
+  // NaN is the 'unavailable' value published by publish_device_unavailable_() and must reach the sensor
+  if (std::isinf(value))
   {
-    ESP_LOGW("JkRS485Bms", "Sensor is invalid NaN or infinite.");
+    ESP_LOGW("JkRS485Bms", "Sensor value is infinite, not publishing.");
     return;
   }
   ESP_LOGVV(TAG, "Debug point 102 (--> %f)", value);

@@ -401,7 +401,7 @@ bool JkRS485Sniffer::calculate_next_pooling(void)
       }
       else
       {
-        if (now-this->rs485_network_node[pooling_index.node_address].last_cell_info_request_received_OK>TIME_BETWEEN_DEVICE_SETTINGS_REQUESTS_MILLISECONDS || this->rs485_network_node[pooling_index.node_address].last_cell_info_request_received_OK==0)
+        if (now-this->rs485_network_node[pooling_index.node_address].last_cell_info_request_received_OK>TIME_BETWEEN_CELL_INFO_REQUESTS_MILLISECONDS ||this->rs485_network_node[pooling_index.node_address].last_cell_info_request_received_OK==0)
         {
           this->pooling_index.frame_type=2; //CELL INFO
           found=true;

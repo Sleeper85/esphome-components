@@ -1,5 +1,5 @@
-# Updated : 2025.07.23
-# Version : 1.1.3
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -27,7 +27,6 @@ ICON_DISPLAY_ALWAYS_ON = "mdi:television"
 
 
 SWITCHES = {
-    CONF_PRECHARGING:                     [0x0000, 0x00, 0x00],
     CONF_CHARGING:                        [0x0070, 0x10, 0x04],
     CONF_DISCHARGING:                     [0x0074, 0x10, 0x04],
     CONF_BALANCING:                       [0x0078, 0x10, 0x04],
@@ -48,10 +47,6 @@ JkRS485BmsSwitch = jk_rs485_bms_ns.class_("JkRS485BmsSwitch", switch.Switch, cg.
 
 CONFIG_SCHEMA = JK_RS485_BMS_COMPONENT_SCHEMA.extend(
     {
-        cv.Optional(CONF_PRECHARGING): switch.switch_schema(
-            JkRS485BmsSwitch,
-            icon=ICON_CHARGING,
-        ).extend(cv.COMPONENT_SCHEMA),
         cv.Optional(CONF_CHARGING): switch.switch_schema(
             JkRS485BmsSwitch,
             icon=ICON_CHARGING,

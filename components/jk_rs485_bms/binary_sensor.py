@@ -1,5 +1,5 @@
-# Updated : 2025.07.23
-# Version : 1.1.3
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -13,13 +13,7 @@ from .const import *
 DEPENDENCIES = ["jk_rs485_bms"]
 CODEOWNERS = ["@syssi","@txubelaxu","@Sleeper85"]
 
-ICON_PRECHARGING = "mdi:battery-charging"
-ICON_PRECHARGING_SWITCH = "mdi:battery-charging"
-ICON_CHARGING_SWITCH = "mdi:battery-charging"
-ICON_DISCHARGING_SWITCH = "mdi:power-plug"
 ICON_BALANCING = "mdi:battery-heart-variant"
-ICON_BALANCING_SWITCH = "mdi:battery-heart-variant"
-ICON_DEDICATED_CHARGER_SWITCH = "mdi:battery-charging"
 ICON_CHARGING = "mdi:battery-charging"
 ICON_DISCHARGING = "mdi:power-plug"
 ICON_BALANCING = "mdi:battery-heart-variant"

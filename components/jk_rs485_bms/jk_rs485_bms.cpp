@@ -63,7 +63,6 @@ namespace esphome {
 namespace jk_rs485_bms {
 
 void JkRS485Bms::set_disable_pcl_module_switch(JkRS485BmsSwitch *disable_pcl_module_switch) {this->disable_pcl_module_switch_ = disable_pcl_module_switch;}
-void JkRS485Bms::set_precharging_switch(JkRS485BmsSwitch *precharging_switch) { this->precharging_switch_ = precharging_switch; }
 void JkRS485Bms::set_charging_switch(JkRS485BmsSwitch *charging_switch) { this->charging_switch_ = charging_switch; }
 void JkRS485Bms::set_discharging_switch(JkRS485BmsSwitch *discharging_switch) { this->discharging_switch_ = discharging_switch; }
 void JkRS485Bms::set_balancing_switch(JkRS485BmsSwitch *balancer_switch) { this->balancer_switch_ = balancer_switch; }
@@ -1393,46 +1392,21 @@ void JkRS485Bms::publish_device_unavailable_()
   this->publish_state_(cell_delta_voltage_sensor_, NAN);
   this->publish_state_(cell_average_voltage_sensor_, NAN);
   this->publish_state_(temperature_powertube_sensor_, NAN);
-  this->publish_state_(temperature_sensor_1_sensor_, NAN);
-  this->publish_state_(temperature_sensor_2_sensor_, NAN);
   this->publish_state_(battery_voltage_sensor_, NAN);
   this->publish_state_(battery_current_sensor_, NAN);
   this->publish_state_(battery_power_sensor_, NAN);
   this->publish_state_(battery_power_charging_sensor_, NAN);
   this->publish_state_(battery_power_discharging_sensor_, NAN);
   this->publish_state_(battery_capacity_remaining_sensor_, NAN);
-  this->publish_state_(battery_capacity_remaining_derived_sensor_, NAN);
-  this->publish_state_(temperature_sensors_sensor_, NAN);
   this->publish_state_(charging_cycles_sensor_, NAN);
   this->publish_state_(battery_capacity_total_charging_cycle_sensor_, NAN);
-  this->publish_state_(battery_strings_sensor_, NAN);
   this->publish_state_(errors_bitmask_sensor_, NAN);
-  this->publish_state_(operation_mode_bitmask_sensor_, NAN);
 
-  this->publish_state_(cell_pressure_difference_protection_sensor_, NAN);
-  this->publish_state_(balancing_opening_pressure_difference_sensor_, NAN);
   this->publish_state_(powertube_temperature_protection_sensor_, NAN);
   this->publish_state_(powertube_temperature_protection_recovery_sensor_, NAN);
-  this->publish_state_(temperature_sensor_temperature_protection_sensor_, NAN);
-  this->publish_state_(temperature_sensor_temperature_recovery_sensor_, NAN);
-  this->publish_state_(temperature_sensor_temperature_difference_protection_sensor_, NAN);
-  this->publish_state_(charging_high_temperature_protection_sensor_, NAN);
-  this->publish_state_(discharging_high_temperature_protection_sensor_, NAN);
-  this->publish_state_(charging_low_temperature_protection_sensor_, NAN);
-  this->publish_state_(charging_low_temperature_recovery_sensor_, NAN);
-  this->publish_state_(discharging_low_temperature_protection_sensor_, NAN);
-  this->publish_state_(discharging_low_temperature_recovery_sensor_, NAN);
-  this->publish_state_(current_calibration_sensor_, NAN);
-  this->publish_state_(device_address_sensor_, NAN);
-  this->publish_state_(sleep_wait_time_sensor_, NAN);
-  this->publish_state_(alarm_low_volume_sensor_, NAN);
-  this->publish_state_(manufacturing_date_sensor_, NAN);
   this->publish_state_(battery_total_runtime_sensor_, NAN);
   this->publish_state_(total_runtime_formatted_text_sensor_, "NAN");
 
-  this->publish_state_(start_current_calibration_sensor_, NAN);
-  this->publish_state_(actual_battery_capacity_sensor_, NAN);
-  this->publish_state_(protocol_version_sensor_, NAN);
 
   for (auto &cell : this->cells_) this->publish_state_(cell.cell_voltage_sensor_, NAN);
 }
@@ -1598,40 +1572,16 @@ void JkRS485Bms::dump_config() {  // NOLINT(google-readability-function-size,rea
   LOG_SENSOR("", "Battery power charging", this->battery_power_charging_sensor_);
   LOG_SENSOR("", "Battery power discharging", this->battery_power_discharging_sensor_);
   LOG_SENSOR("", "Battery capacity remaining", this->battery_capacity_remaining_sensor_);
-  LOG_SENSOR("", "Battery capacity remaining Derived", this->battery_capacity_remaining_derived_sensor_);
-  LOG_SENSOR("", "Temperature Sensors", this->temperature_sensors_sensor_);
   LOG_SENSOR("", "Charging Cycles", this->charging_cycles_sensor_);
   LOG_SENSOR("", "Battery capacity total charging cycle", this->battery_capacity_total_charging_cycle_sensor_);
-  LOG_SENSOR("", "Battery Strings", this->battery_strings_sensor_);
   LOG_SENSOR("", "Errors Bitmask", this->errors_bitmask_sensor_);
-  LOG_SENSOR("", "Operation Mode Bitmask", this->operation_mode_bitmask_sensor_);
   LOG_SENSOR("", "Cell Overvoltage Protection", this->cell_overvoltage_protection_sensor_);
   LOG_SENSOR("", "Cell Overvoltage Protection Recovery", this->cell_overvoltage_protection_recovery_sensor_);
   LOG_SENSOR("", "Cell Undervoltage Protection", this->cell_undervoltage_protection_number_);
   LOG_SENSOR("", "Cell Undervoltage Protection Recovery", this->cell_undervoltage_protection_recovery_number_);
-  LOG_SENSOR("", "Cell Pressure Difference Protection", this->cell_pressure_difference_protection_sensor_);
-  LOG_SENSOR("", "BALANCING OPENING PRESSURE DIFFERENCE", this->balancing_opening_pressure_difference_sensor_);
   LOG_SENSOR("", "Temperature powertube Protection", this->powertube_temperature_protection_sensor_);
   LOG_SENSOR("", "Powertube temperature protection recovery", this->powertube_temperature_protection_recovery_sensor_);
-  LOG_SENSOR("", "Temperature Sensor Temperature Protection", this->temperature_sensor_temperature_protection_sensor_);
-  LOG_SENSOR("", "Temperature Sensor Temperature Recovery", this->temperature_sensor_temperature_recovery_sensor_);
-  LOG_SENSOR("", "Temperature Sensor Temperature Difference Protection",
-             this->temperature_sensor_temperature_difference_protection_sensor_);
-  LOG_SENSOR("", "Charging High Temperature Protection", this->charging_high_temperature_protection_sensor_);
-  LOG_SENSOR("", "Discharging High Temperature Protection", this->discharging_high_temperature_protection_sensor_);
-  LOG_SENSOR("", "Charging Low Temperature Protection", this->charging_low_temperature_protection_sensor_);
-  LOG_SENSOR("", "Charging Low Temperature Recovery", this->charging_low_temperature_recovery_sensor_);
-  LOG_SENSOR("", "Discharging Low Temperature Protection", this->discharging_low_temperature_protection_sensor_);
-  LOG_SENSOR("", "Discharging Low Temperature Recovery", this->discharging_low_temperature_recovery_sensor_);
-  LOG_SENSOR("", "Current Calibration", this->current_calibration_sensor_);
-  LOG_SENSOR("", "Device Address", this->device_address_sensor_);
-  LOG_TEXT_SENSOR("", "Battery Type", this->battery_type_text_sensor_);
-  LOG_SENSOR("", "Sleep Wait Time", this->sleep_wait_time_sensor_);
-  LOG_SENSOR("", "Alarm Low Volume", this->alarm_low_volume_sensor_);
-  LOG_SENSOR("", "Manufacturing Date", this->manufacturing_date_sensor_);
   LOG_SENSOR("", "Battery total runtime", this->battery_total_runtime_sensor_);
-  LOG_SENSOR("", "Start Current Calibration", this->start_current_calibration_sensor_);
-  LOG_SENSOR("", "Protocol Version", this->protocol_version_sensor_);
   LOG_SENSOR("", "Protocol Version", this->cell_request_charge_voltage_time_sensor_);
   LOG_SENSOR("", "Protocol Version", this->cell_request_float_voltage_time_sensor_);
   LOG_BINARY_SENSOR("", "Status Balancing", this->status_balancing_binary_sensor_);

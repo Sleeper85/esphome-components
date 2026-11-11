@@ -45,7 +45,6 @@ DEFAULT_STEP = 1
 UNIT_MICROSECONDS = "us"
 UNIT_SECONDS = "s"
 UNIT_HOURS = "h"
-UNIT_OHM = "Ω"
 UNIT_AMPERE_HOURS = "Ah"
 
 CONF_CELL_SMART_SLEEP_VOLTAGE = "cell_smart_sleep_voltage"
@@ -90,30 +89,16 @@ CONF_CURRENT_CALIBRATION = "current_calibration"
 
 ICON_BALANCING = "mdi:seesaw"
 ICON_CURRENT_DC = "mdi:current-dc"
-ICON_CELL_VOLTAGE_MIN_CELL_NUMBER = "mdi:battery-minus-outline"
-ICON_CELL_VOLTAGE_MAX_CELL_NUMBER = "mdi:battery-plus-outline"
 
-ICON_BATTERY_STRINGS = "mdi:car-battery"
-ICON_BATTERY_CAPACITY_REMAINING = "mdi:battery-50"
-ICON_BATTERY_CAPACITY_REMAINING_DERIVED = "mdi:battery-50"
-ICON_ACTUAL_BATTERY_CAPACITY = "mdi:battery-50"
 ICON_BATTERY_CAPACITY_TOTAL_SETTING = "mdi:battery-sync"
 
-ICON_DEVICE_ADDRESS = "mdi:identifier"
-ICON_ERRORS_BITMASK = "mdi:alert-circle-outline"
-ICON_OPERATION_MODE_BITMASK = "mdi:heart-pulse"
-ICON_CHARGING_CYCLES = "mdi:battery-sync"
-ICON_ALARM_LOW_VOLUME = "mdi:volume-high"
 
-ICON_CELL_RESISTANCE = "mdi:omega"
 ICON_BALANCING = "mdi:seesaw"
-ICON_DIRECTION = "mdi:swap-horizontal-bold"
 ICON_CLOCK ="mdi:clock-outline"
 
 ICON_HIGH_TEMPERATURE = "mdi:weather-sunny"
 ICON_LOW_TEMPERATURE = "mdi:snowflake"
 
-UNIT_AMPERE_HOUR = "Ah"
 
 NUMBERS = {
     # JK04, JK02_24S, JK02_32S, factor, length

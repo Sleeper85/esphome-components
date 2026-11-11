@@ -1,9 +1,8 @@
-# Updated : 2025.07.23
-# Version : 1.1.1
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 # switch
-CONF_PRECHARGING = "precharging"
 CONF_CHARGING = "charging"
 CONF_DISCHARGING = "discharging"
 CONF_BALANCING = "balancing"

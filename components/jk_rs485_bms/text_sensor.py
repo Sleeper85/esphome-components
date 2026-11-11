@@ -1,5 +1,5 @@
-# Updated : 2025.07.23
-# Version : 1.1.3
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -13,8 +13,6 @@ DEPENDENCIES = ["jk_rs485_bms"]
 CODEOWNERS = ["@syssi","@txubelaxu","@Sleeper85"]
 
 CONF_ERRORS = "errors"
-CONF_OPERATION_STATUS = "operation_status"
-CONF_BATTERY_TYPE = "battery_type"
 CONF_TOTAL_RUNTIME_FORMATTED = "total_runtime_formatted"
 CONF_INFO_VENDORID = "info_vendorid"
 CONF_INFO_HARDWARE_VERSION = "info_hardware_version"
@@ -26,16 +24,11 @@ CONF_INFO_DEVICE_SERIAL_NUMBER = "info_device_serial_number"
 CONF_INFO_DEVICE_SETUP_PASSCODE = "info_device_setup_passcode"
 
 ICON_ERRORS = "mdi:alert-circle-outline"
-ICON_OPERATION_STATUS = "mdi:heart-pulse"
-ICON_BATTERY_TYPE = "mdi:car-battery"
-ICON_PASSWORD = "mdi:lock-outline"
 ICON_INFORMATION = "mdi:information"
 ICON_NETWORK = "mdi:lan"
 
 TEXT_SENSORS = [
     CONF_ERRORS,
-    CONF_OPERATION_STATUS,
-    CONF_BATTERY_TYPE,
     CONF_TOTAL_RUNTIME_FORMATTED,
     CONF_INFO_VENDORID,
     CONF_INFO_HARDWARE_VERSION,
@@ -49,17 +42,9 @@ TEXT_SENSORS = [
 
 CONFIG_SCHEMA = JK_RS485_BMS_COMPONENT_SCHEMA.extend(
     {
-        cv.Optional(CONF_OPERATION_STATUS): text_sensor.text_sensor_schema(
-                text_sensor.TextSensor,
-                icon=ICON_OPERATION_STATUS,
-        ),
         cv.Optional(CONF_ERRORS): text_sensor.text_sensor_schema(
                 text_sensor.TextSensor,
                 icon=ICON_ERRORS,
-        ),
-        cv.Optional(CONF_BATTERY_TYPE): text_sensor.text_sensor_schema(
-                text_sensor.TextSensor,
-                icon=ICON_BATTERY_TYPE,
         ),
         cv.Optional(CONF_TOTAL_RUNTIME_FORMATTED): text_sensor.text_sensor_schema(
                 text_sensor.TextSensor,

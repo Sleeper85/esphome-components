@@ -58,9 +58,6 @@ async def to_code(config):
     if CONF_TALK_PIN in config:
        talk_pin = await cg.gpio_pin_expression(config[CONF_TALK_PIN])
        cg.add(var.set_talk_pin(talk_pin))
-       cg.add(var.set_talk_pin_needed(True))
-    else:
-       cg.add(var.set_talk_pin_needed(False))
 
 
 

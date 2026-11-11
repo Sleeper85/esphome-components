@@ -22,7 +22,6 @@
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include "esphome/components/uart/uart.h"
-#include "talk_pin.h"
 
 
 namespace esphome {
@@ -30,7 +29,7 @@ namespace jk_rs485_sniffer {
 
 class JkRS485SnifferDevice;
 
-class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public Component {
+class JkRS485Sniffer : public uart::UARTDevice, public Component {
  public:
   JkRS485Sniffer() = default;
 
@@ -38,17 +37,13 @@ class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public C
   bool get_broadcast_changes_to_all_bms() const;
 
   void set_talk_pin(GPIOPin *pin) { talk_pin_ = pin; }
-  void set_talk_pin_needed(bool talk_pin_needed) { talk_pin_needed_= talk_pin_needed;}
 
   void setup() override {
 
-    if (talk_pin_needed_)
+    if (this->talk_pin_ != nullptr)
     {
-      this->turn_off();
-      //this->talk_pin_->pin_mode(esphome::gpio::FLAG_OUTPUT);
       this->talk_pin_->setup();
-      //this->turn_on();
-      this->talk_pin_->digital_write(0); 
+      this->talk_pin_->digital_write(false);
     }
 
     for (uint8_t cont=0;cont<16;cont++)
@@ -115,6 +110,7 @@ class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public C
 
   void detected_master_activity_now(void);
   void send_request_to_slave(uint8_t node_address, uint8_t frame_type);
+  void send_frame_(const uint8_t *frame, size_t size, uint8_t address);
   
   bool calculate_next_pooling(void);
   int found_next_node_to_discover(void);
@@ -126,12 +122,8 @@ class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public C
   uint32_t last_jk_rs485_pooling_trial_{0};
   std::vector<JkRS485SnifferDevice *> devices_;  
 
-  void write_state(bool state) override {
-    if (this->talk_pin_needed_ && this->talk_pin_ != nullptr) { this->talk_pin_->digital_write(state); }
-  }
-  // void write_state(bool state) override { this->set_state(state); }
+  // Optional : drives the DE/RE pins of the RS485 transceiver, nullptr when not configured
   GPIOPin *talk_pin_{nullptr};
-  bool talk_pin_needed_{false};
 
   struct struct_rs485_network_node
   {

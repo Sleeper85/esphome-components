@@ -231,6 +231,20 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint16_event(std::uint8
 //  return (status == 0);
 }
 
+// Sends a frame on the bus, driving the talk pin of the RS485 transceiver when there is one
+void JkRS485Sniffer::send_frame_(const uint8_t *frame, size_t size, uint8_t address) {
+  if (this->talk_pin_ != nullptr) { this->talk_pin_->digital_write(true); }
+  delayMicroseconds(50);
+  this->write_array(frame, size);
+  this->flush();
+  if (this->talk_pin_ != nullptr) { this->talk_pin_->digital_write(false); }
+  delayMicroseconds(50);
+
+  const uint32_t now=millis();
+  this->rs485_network_node[address].last_request_sent=now;
+  this->last_jk_rs485_network_activity_=now;
+}
+
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint32_t value) {
   uint8_t frame[13];
   uint8_t size=0;
@@ -261,19 +275,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Send the byte array via UART
-  std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
-
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
-  delayMicroseconds(50); //50us
-  this->write_array(data_to_send);
-  this->flush();
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(0); } 
-  delayMicroseconds(50); //50us
-   
-  const uint32_t now=millis();
-  this->rs485_network_node[slave_address].last_request_sent=now;  
-  this->last_jk_rs485_network_activity_=now;   
+  this->send_frame_(frame, size, slave_address);
 }
 
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint16_t value) {
@@ -300,19 +302,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Send the byte array via UART
-  std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
-
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
-  delayMicroseconds(50); //50us
-  this->write_array(data_to_send);
-  this->flush();
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(0); } 
-  delayMicroseconds(50); //50us
-   
-  const uint32_t now=millis();
-  this->rs485_network_node[slave_address].last_request_sent=now;  
-  this->last_jk_rs485_network_activity_=now;   
+  this->send_frame_(frame, size, slave_address);
 }
 
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::int32_t value) {
@@ -339,19 +329,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t s
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Send the byte array via UART
-  std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
-
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
-  delayMicroseconds(50); //50us
-  this->write_array(data_to_send);
-  this->flush();
-  if (talk_pin_needed_) { this->talk_pin_->digital_write(0); } 
-  delayMicroseconds(50); //50us
-   
-  const uint32_t now=millis();
-  this->rs485_network_node[slave_address].last_request_sent=now;  
-  this->last_jk_rs485_network_activity_=now;   
+  this->send_frame_(frame, size, slave_address);
 }
 
 
@@ -379,19 +357,7 @@ void JkRS485Sniffer::send_request_to_slave(uint8_t address, uint8_t frame_type)
     frame[10] = ((computed_checksum & 0x00FF)>>0);
 
     ESP_LOGV(TAG, "MESSAGE REQUEST TO SEND>>: %s",format_hex_pretty(frame, 11).c_str());
-    // Send the byte array via UART
-    std::vector<uint8_t> data_to_send(frame, frame + sizeof(frame) / sizeof(frame[0]));
-
-    if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
-    delayMicroseconds(50); //50us
-    this->write_array(data_to_send);
-    this->flush();
-    if (talk_pin_needed_) { this->talk_pin_->digital_write(0); } 
-    delayMicroseconds(50); //50us
-
-    const uint32_t now=millis();
-    this->rs485_network_node[address].last_request_sent=now;  
-    this->last_jk_rs485_network_activity_=now;     
+    this->send_frame_(frame, sizeof(frame), address);
 }
 
 bool JkRS485Sniffer::calculate_next_pooling(void)

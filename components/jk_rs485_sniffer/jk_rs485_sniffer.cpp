@@ -1,5 +1,5 @@
 // Updated : 2026.11.11
-// Version : 1.2.0
+// Version : 1.2.1
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -26,6 +26,9 @@ static const char *const TAG = "jk_rs485_sniffer";
 static const uint16_t JKPB_RS485_MASTER_SHORT_REQUEST_SIZE = 8;
 static const uint16_t JKPB_RS485_MASTER_REQUEST_SIZE = 11;
 static const uint16_t JKPB_RS485_RESPONSE_SIZE = 308;
+
+// Cap on rx_buffer_ growth : std::vector::max_size() is the allocator limit and is never reached
+static const size_t RX_BUFFER_MAX_SIZE = 4 * JKPB_RS485_RESPONSE_SIZE;
 
 static const uint16_t JKPB_RS485_NUMBER_OF_ELEMENTS_TO_COMPUTE_CHECKSUM = 299;
 static const uint16_t JKPB_RS485_FRAME_TYPE_ADDRESS = 4;
@@ -551,7 +554,7 @@ int JkRS485Sniffer::found_next_node_to_discover(void)
 void JkRS485Sniffer::loop() {
   uint32_t now = millis();
 
-  if (this->rx_buffer_.size()==this->rx_buffer_.max_size()){
+  if (this->rx_buffer_.size()>=RX_BUFFER_MAX_SIZE){
     ESP_LOGW(TAG, "### Buffer cleared buffer size: %d",this->rx_buffer_.size());
     this->rx_buffer_.clear();
   }
@@ -568,7 +571,7 @@ void JkRS485Sniffer::loop() {
 
     //bulk to Received data to "rx_buffer_"
     uint8_t byte;
-    while (this->available() && (this->rx_buffer_.size()<this->rx_buffer_.max_size())) {
+    while (this->available() && (this->rx_buffer_.size()<RX_BUFFER_MAX_SIZE)) {
       this->read_byte(&byte);
       this->rx_buffer_.push_back(byte);
     }

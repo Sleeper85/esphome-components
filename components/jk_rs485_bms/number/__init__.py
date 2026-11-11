@@ -101,7 +101,7 @@ ICON_LOW_TEMPERATURE = "mdi:snowflake"
 
 
 NUMBERS = {
-    # JK04, JK02_24S, JK02_32S, factor, length
+    # [register offset, high byte of the absolute address, length in bytes, factor (power of 10), type (0 : unsigned, 1 : signed)]
     CONF_CELL_SMART_SLEEP_VOLTAGE:                          [0x0000, 0x10, 0x04,3,0],
     CONF_CELL_UNDERVOLTAGE_PROTECTION:                      [0x0004, 0x10, 0x04,3,0],
     CONF_CELL_UNDERVOLTAGE_PROTECTION_RECOVERY:             [0x0008, 0x10, 0x04,3,0],

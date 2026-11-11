@@ -36,12 +36,6 @@ namespace jk_rs485_bms {
 class JkRS485BmsSwitch;    // Prior declaration of JkRS485BmsSwitch
 class JkRS485BmsNumber;    // Prior declaration of de JkRS485BmsNumber
 
-enum ProtocolVersion {
-  PROTOCOL_VERSION_JK04,
-  PROTOCOL_VERSION_JK02_24S,
-  PROTOCOL_VERSION_JK02_32S,
-};
-
 // The problem you are experiencing is because the compiler finds references to JkRS485BmsSwitch
 // in the jk_rs485_bms.h file before it knows the definition of the JkRS485BmsSwitch class.
 // This happens because jk_rs485_bms.h is included before the compiler has processed the definition of JkRS485BmsSwitch.
@@ -442,7 +436,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
 
  protected:
   jk_rs485_sniffer::JkRS485Sniffer *parent_;
-  ProtocolVersion protocol_version_{PROTOCOL_VERSION_JK02_32S};
 
   uint8_t address_;
   uint8_t battery_total_alarms_count_;

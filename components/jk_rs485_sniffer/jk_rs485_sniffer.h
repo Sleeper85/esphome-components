@@ -28,13 +28,6 @@
 namespace esphome {
 namespace jk_rs485_sniffer {
 
-enum ProtocolVersion
-{
-  PROTOCOL_VERSION_JK04,
-  PROTOCOL_VERSION_JK02_24S,
-  PROTOCOL_VERSION_JK02_32S,
-};
-
 class JkRS485SnifferDevice;
 
 class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public Component {
@@ -109,7 +102,6 @@ class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public C
   void send_command_switch_or_number_to_slave_uint16(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint16_t value);
 
  protected:
-  ProtocolVersion protocol_version_{PROTOCOL_VERSION_JK02_32S};
   
   bool act_as_master;
   uint32_t last_master_activity;

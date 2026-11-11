@@ -1,5 +1,5 @@
-# Updated : 2026.01.13
-# Version : 1.1.5
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -148,7 +148,7 @@ NUMBERS = {
     CONF_MOS_OVERTEMPERATURE_PROTECTION_RECOVERY:           [0x0068, 0x10, 0x04,1,1],
     CONF_CELL_COUNT_SETTINGS:                               [0x006C, 0x10, 0x04,0,0],
     CONF_BATTERY_CAPACITY_TOTAL_SETTINGS:                   [0x007C, 0x10, 0x04,3,0],
-    CONF_PRECHARGING_TIME_FROM_DISCHARGE:                   [0x010C, 0x10, 0x04,3,0], # TO VERIFY !
+    CONF_PRECHARGING_TIME_FROM_DISCHARGE:                   [0x010C, 0x11, 0x04,3,0], # absolute address 0x1000 + 0x010C = 0x110C
     CONF_CELL_REQUEST_CHARGE_VOLTAGE_TIME:                  [0x0104, 0x15, 0x02,1,0],
     CONF_CELL_REQUEST_FLOAT_VOLTAGE_TIME:                   [0x0104, 0x15, 0x02,1,0],
 }

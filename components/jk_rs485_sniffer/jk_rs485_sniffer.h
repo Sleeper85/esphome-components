@@ -1,5 +1,5 @@
-// Updated : 2025.01.25
-// Version : 1.1.1
+// Updated : 2026.11.11
+// Version : 1.2.0
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or

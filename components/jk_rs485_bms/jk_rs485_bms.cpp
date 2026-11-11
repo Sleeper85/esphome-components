@@ -397,16 +397,16 @@ void JkRS485Bms::trigger_bms2sniffer_switch16_event(std::uint16_t register_addre
   uint16_t value_to_send=0;
 
   if (
-    (this->heating_switch_->is_ready()) &&
-    (this->disable_temperature_sensors_switch_->is_ready()) &&
-    (this->gps_heartbeat_switch_->is_ready()) &&
-    (this->port_selection_switch_->is_ready()) &&
-    (this->display_always_on_switch_->is_ready()) &&
-    (this->special_charger_switch_->is_ready()) &&
-    (this->smart_sleep_on_switch_->is_ready()) &&
-    (this->disable_pcl_module_switch_->is_ready()) &&
-    (this->timed_stored_data_switch_->is_ready()) &&
-    (this->charging_float_mode_switch_->is_ready()) 
+    (this->heating_switch_ != nullptr) && (this->heating_switch_->is_ready()) &&
+    (this->disable_temperature_sensors_switch_ != nullptr) && (this->disable_temperature_sensors_switch_->is_ready()) &&
+    (this->gps_heartbeat_switch_ != nullptr) && (this->gps_heartbeat_switch_->is_ready()) &&
+    (this->port_selection_switch_ != nullptr) && (this->port_selection_switch_->is_ready()) &&
+    (this->display_always_on_switch_ != nullptr) && (this->display_always_on_switch_->is_ready()) &&
+    (this->special_charger_switch_ != nullptr) && (this->special_charger_switch_->is_ready()) &&
+    (this->smart_sleep_on_switch_ != nullptr) && (this->smart_sleep_on_switch_->is_ready()) &&
+    (this->disable_pcl_module_switch_ != nullptr) && (this->disable_pcl_module_switch_->is_ready()) &&
+    (this->timed_stored_data_switch_ != nullptr) && (this->timed_stored_data_switch_->is_ready()) &&
+    (this->charging_float_mode_switch_ != nullptr) && (this->charging_float_mode_switch_->is_ready()) 
   ) {
     value_to_send = this->charging_float_mode_switch_->state;
     value_to_send = (value_to_send << 1) | this->timed_stored_data_switch_->state;
@@ -444,8 +444,8 @@ void JkRS485Bms::trigger_bms2sniffer_number16_event(std::uint16_t register_addre
   uint16_t value_to_send=0;
 
   if (
-    (this->cell_request_charge_voltage_time_number_ ->is_ready()) &&
-    (this->cell_request_float_voltage_time_number_->is_ready())
+    (this->cell_request_charge_voltage_time_number_ != nullptr) && (this->cell_request_charge_voltage_time_number_->is_ready()) &&
+    (this->cell_request_float_voltage_time_number_ != nullptr) && (this->cell_request_float_voltage_time_number_->is_ready())
   ) {
 
     uint8_t high = static_cast<uint8_t>(this->cell_request_charge_voltage_time_number_->state*10);
@@ -491,7 +491,7 @@ void JkRS485Bms::on_jk_rs485_sniffer_data(const uint8_t &origin_address, const u
         if (this->protocol_version_ == PROTOCOL_VERSION_JK04) {
           // this->decode_jk04_cell_info_(data);
         } else {
-          if (this->cell_count_settings_number_->state>0){
+          if (this->cell_count_settings_number_ != nullptr && this->cell_count_settings_number_->state>0){
             this->decode_jk02_cell_info_(data);
           } else {
             ESP_LOGI(TAG, "Frame type 0x%02X received from address 0x%02X. But 0x01 frame type must be processed first", frame_type,origin_address);      
@@ -510,7 +510,8 @@ void JkRS485Bms::on_jk_rs485_sniffer_data(const uint8_t &origin_address, const u
         ESP_LOGD(TAG, "  %s", format_hex_pretty(&data.front(), 150).c_str());
     }
 
-    if (this->cell_count_real_sensor_->state>0 && this->cell_count_settings_number_->state>0)
+    if (this->cell_count_real_sensor_ != nullptr && this->cell_count_settings_number_ != nullptr &&
+        this->cell_count_real_sensor_->state>0 && this->cell_count_settings_number_->state>0)
     {
       this->reset_status_online_tracker_();
     }
@@ -598,7 +599,7 @@ void JkRS485Bms::decode_jk02_cell_info_(const std::vector<uint8_t> &data) {
   float cell_voltage;
   float cell_resistance;
 
-  uint8_t cells_from_settings = (uint8_t) this->cell_count_settings_number_->state;
+  uint8_t cells_from_settings = (this->cell_count_settings_number_ != nullptr) ? (uint8_t) this->cell_count_settings_number_->state : 0;
 
   if (cells_from_settings>0) cells=cells_from_settings;
 

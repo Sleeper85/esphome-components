@@ -1,5 +1,5 @@
 // Updated : 2026.11.11
-// Version : 1.2.0
+// Version : 1.2.1
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -130,15 +130,17 @@ class JkRS485Sniffer : public uart::UARTDevice, public output::TalkPin, public C
 
   std::vector<uint8_t> rx_buffer_;
   uint16_t rx_timeout_{50};
-  bool broadcast_changes_to_all_bms_;
+  bool broadcast_changes_to_all_bms_{false};
   uint32_t last_jk_rs485_network_activity_{0};
   uint32_t last_jk_rs485_pooling_trial_{0};
   std::vector<JkRS485SnifferDevice *> devices_;  
 
-  void write_state(bool state) override { this->talk_pin_->digital_write(state); }
+  void write_state(bool state) override {
+    if (this->talk_pin_needed_ && this->talk_pin_ != nullptr) { this->talk_pin_->digital_write(state); }
+  }
   // void write_state(bool state) override { this->set_state(state); }
-  GPIOPin *talk_pin_;
-  bool talk_pin_needed_;
+  GPIOPin *talk_pin_{nullptr};
+  bool talk_pin_needed_{false};
 
   struct struct_rs485_network_node
   {
@@ -177,7 +179,7 @@ class JkRS485SnifferDevice {
  protected:
   friend JkRS485Sniffer;
 
-  JkRS485Sniffer *parent_;
+  JkRS485Sniffer *parent_{nullptr};
   //uint8_t address_;
 };
 

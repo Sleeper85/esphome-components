@@ -62,171 +62,6 @@ float int16_to_float(const uint8_t *byteArray)
 namespace esphome {
 namespace jk_rs485_bms {
 
-void JkRS485Bms::JkRS485Bms_init(void)
-{
-  this->precharging_switch_ = new JkRS485BmsSwitch(false);
-  this->charging_switch_ = new JkRS485BmsSwitch(false);
-  this->discharging_switch_ = new JkRS485BmsSwitch(false);
-  this->balancer_switch_ = new JkRS485BmsSwitch(false);
-  this->emergency_switch_ = new JkRS485BmsSwitch(false);
-  this->heating_switch_ = new JkRS485BmsSwitch(false);
-  this->charging_float_mode_switch_ = new JkRS485BmsSwitch(false);
-  this->disable_temperature_sensors_switch_ = new JkRS485BmsSwitch(false);
-  this->display_always_on_switch_ = new JkRS485BmsSwitch(false);
-  this->smart_sleep_on_switch_ = new JkRS485BmsSwitch(false);
-  this->timed_stored_data_switch_ = new JkRS485BmsSwitch(false);
-  this->disable_pcl_module_switch_ = new JkRS485BmsSwitch(false);
-  this->gps_heartbeat_switch_ = new JkRS485BmsSwitch(false);
-  this->port_selection_switch_ = new JkRS485BmsSwitch(false);
-  this->special_charger_switch_ = new JkRS485BmsSwitch(false);
-
-  this->status_online_binary_sensor_= new binary_sensor::BinarySensor();
-  this->status_balancing_binary_sensor_= new binary_sensor::BinarySensor();
-  this->status_precharging_binary_sensor_= new binary_sensor::BinarySensor();  
-  this->status_charging_binary_sensor_= new binary_sensor::BinarySensor();
-  this->status_discharging_binary_sensor_= new binary_sensor::BinarySensor();
-  this->status_heating_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_wireres_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_mosotp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_cellquantity_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_cursensorerr_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_cellovp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_batovp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_chocp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_chscp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_chotp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_chutp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_cpuauxcommuerr_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_celluvp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_batuvp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_dchocp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_dchscp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_dchotp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_chargemos_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_dischargemos_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_gpsdisconneted_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_modifypwdintime_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_dischargeonfailed_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_batteryovertemp_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_temperaturesensoranomaly_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_plcmoduleanomaly_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_mostempsensorabsent_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_battempsensor1absent_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_battempsensor2absent_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_battempsensor3absent_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_battempsensor4absent_binary_sensor_= new binary_sensor::BinarySensor();
-  this->alarm_battempsensor5absent_binary_sensor_= new binary_sensor::BinarySensor();
-
-  this->battery_total_alarms_count_sensor_= new sensor::Sensor();
-  this->battery_total_alarms_active_sensor_= new sensor::Sensor();
-  this->smart_sleep_time_sensor_= new sensor::Sensor();
-  this->emergency_time_countdown_sensor_= new sensor::Sensor();
-  this->balancing_direction_sensor_= new sensor::Sensor(); 
-  this->max_discharging_current_sensor_= new sensor::Sensor();
-  this->scp_recovery_time_number_= new sensor::Sensor();    
-  this->total_battery_capacity_number_= new sensor::Sensor();  
-  this->discharging_overcurrent_protection_release_time_sensor_= new sensor::Sensor();
-  this->discharging_short_circuit_protection_release_time_sensor_= new sensor::Sensor();
-  this->charging_overcurrent_protection_release_time_sensor_= new sensor::Sensor();
-  this->charging_short_circuit_protection_release_time_sensor_= new sensor::Sensor();
-  this->cell_undervoltage_protection_release_time_sensor_= new sensor::Sensor();
-  this->cell_overvoltage_protection_release_time_sensor_= new sensor::Sensor();
-  this->cell_count_real_sensor_= new sensor::Sensor();
-  this->cell_voltage_min_sensor_= new sensor::Sensor();
-  this->cell_voltage_max_sensor_= new sensor::Sensor();
-  this->cell_resistance_min_sensor_= new sensor::Sensor();
-  this->cell_resistance_max_sensor_= new sensor::Sensor();  
-  this->cell_voltage_min_cell_number_sensor_= new sensor::Sensor();
-  this->cell_voltage_max_cell_number_sensor_= new sensor::Sensor();
-  this->cell_resistance_min_cell_number_sensor_= new sensor::Sensor();
-  this->cell_resistance_max_cell_number_sensor_= new sensor::Sensor();  
-  this->cell_delta_voltage_sensor_= new sensor::Sensor();
-  this->cell_average_voltage_sensor_= new sensor::Sensor();
-  this->temperature_powertube_sensor_= new sensor::Sensor();
-  this->temperature_sensor_1_sensor_= new sensor::Sensor();
-  this->temperature_sensor_2_sensor_= new sensor::Sensor();
-  this->battery_voltage_sensor_= new sensor::Sensor();
-  this->battery_current_sensor_= new sensor::Sensor();
-  this->battery_power_sensor_= new sensor::Sensor();
-  this->battery_power_charging_sensor_= new sensor::Sensor();
-  this->battery_power_discharging_sensor_= new sensor::Sensor();
-  this->battery_capacity_remaining_sensor_= new sensor::Sensor();
-  this->battery_capacity_remaining_derived_sensor_= new sensor::Sensor();
-  this->temperature_sensors_sensor_= new sensor::Sensor();
-  this->charging_cycles_sensor_= new sensor::Sensor();
-  this->battery_capacity_total_charging_cycle_sensor_= new sensor::Sensor();
-  this->battery_strings_sensor_= new sensor::Sensor();
-  this->errors_bitmask_sensor_= new sensor::Sensor();
-  this->operation_mode_bitmask_sensor_= new sensor::Sensor();
-  this->cell_voltage_overvoltage_delay_sensor_= new sensor::Sensor();
-  this->cell_voltage_undervoltage_delay_sensor_= new sensor::Sensor();
-  this->cell_pressure_difference_protection_sensor_= new sensor::Sensor();
-  this->discharging_overcurrent_protection_sensor_= new sensor::Sensor();
-  this->discharging_overcurrent_delay_sensor_= new sensor::Sensor();
-  this->charging_overcurrent_protection_sensor_= new sensor::Sensor();
-  this->charging_overcurrent_delay_sensor_= new sensor::Sensor();
-  this->balancing_opening_pressure_difference_sensor_= new sensor::Sensor();
-  this->powertube_temperature_protection_sensor_= new sensor::Sensor();
-  this->powertube_temperature_protection_recovery_sensor_= new sensor::Sensor();
-  this->temperature_sensor_temperature_protection_sensor_= new sensor::Sensor();
-  this->temperature_sensor_temperature_recovery_sensor_= new sensor::Sensor();
-  this->temperature_sensor_temperature_difference_protection_sensor_= new sensor::Sensor();
-  this->battery_soh_valuation_sensor_= new sensor::Sensor();
-  this->battery_total_runtime_sensor_= new sensor::Sensor();
-  this->battery_capacity_state_of_charge_sensor_= new sensor::Sensor();
-  this->heating_current_sensor_= new sensor::Sensor();
-  this->balancing_current_sensor_= new sensor::Sensor();
-  this->uart1_protocol_number_sensor_= new sensor::Sensor();
-  this->uart2_protocol_number_sensor_= new sensor::Sensor();  
-
-  this->cell_smart_sleep_voltage_number_  = new JkRS485BmsNumber();
-  this->cell_undervoltage_protection_number_ = new JkRS485BmsNumber();
-  this->cell_undervoltage_protection_recovery_number_ = new JkRS485BmsNumber();
-  this->cell_overvoltage_protection_number_ = new JkRS485BmsNumber();
-  this->cell_overvoltage_protection_recovery_number_ = new JkRS485BmsNumber();   
-  this->cell_balancing_trigger_voltage_number_ = new JkRS485BmsNumber();   
-  this->cell_soc100_voltage_number_ = new JkRS485BmsNumber();   
-  this->cell_soc0_voltage_number_ = new JkRS485BmsNumber();  
-  this->cell_request_charge_voltage_number_ = new JkRS485BmsNumber();   
-  this->cell_request_float_voltage_number_ = new JkRS485BmsNumber();  
-  this->cell_power_off_voltage_number_ = new JkRS485BmsNumber();  
-  this->cell_balancing_starting_voltage_number_ = new JkRS485BmsNumber(); 
-  this->max_charging_current_number_ = new JkRS485BmsNumber();  
-  this->charging_overcurrent_protection_delay_number_ = new JkRS485BmsNumber();
-  this->charging_overcurrent_protection_recovery_delay_number_ = new JkRS485BmsNumber();
-  this->max_discharging_current_number_ = new JkRS485BmsNumber();  
-  this->discharging_overcurrent_protection_delay_number_ = new JkRS485BmsNumber();
-  this->discharging_overcurrent_protection_recovery_delay_number_ = new JkRS485BmsNumber();    
-  this->short_circuit_protection_delay_number_ = new JkRS485BmsNumber(); 
-  this->short_circuit_protection_recovery_delay_number_ = new JkRS485BmsNumber(); 
-  this->max_balancing_current_number_ = new JkRS485BmsNumber(); 
-  this->charging_overtemperature_protection_number_ = new JkRS485BmsNumber(); 
-  this->charging_overtemperature_protection_recovery_number_ = new JkRS485BmsNumber(); 
-  this->discharging_overtemperature_protection_number_ = new JkRS485BmsNumber(); 
-  this->discharging_overtemperature_protection_recovery_number_ = new JkRS485BmsNumber(); 
-  this->charging_lowtemperature_protection_number_ = new JkRS485BmsNumber(); 
-  this->charging_lowtemperature_protection_recovery_number_ = new JkRS485BmsNumber(); 
-  this->mos_overtemperature_protection_number_ = new JkRS485BmsNumber(); 
-  this->mos_overtemperature_protection_recovery_number_ = new JkRS485BmsNumber();   
-  this->cell_count_settings_number_ = new JkRS485BmsNumber();   
-  this->battery_capacity_total_settings_number_ = new JkRS485BmsNumber();   
-  this->precharging_time_from_discharge_number_ = new JkRS485BmsNumber();   
-  this->cell_request_charge_voltage_time_number_ = new JkRS485BmsNumber();   
-  this->cell_request_float_voltage_time_number_ = new JkRS485BmsNumber();   
-  
-  for (uint8_t i = 0; i < 32; ++i)
-  {
-    cells_[i].cell_voltage_sensor_ = new sensor::Sensor();
-    cells_[i].cell_resistance_sensor_ = new sensor::Sensor();
-  }
-  
-  for (uint8_t i = 0; i < 32; ++i)
-  {
-    cells_[i].cell_voltage_sensor_ = nullptr;
-    cells_[i].cell_resistance_sensor_ = nullptr;
-  }
-}
-
 void JkRS485Bms::set_disable_pcl_module_switch(JkRS485BmsSwitch *disable_pcl_module_switch) {this->disable_pcl_module_switch_ = disable_pcl_module_switch;}
 void JkRS485Bms::set_precharging_switch(JkRS485BmsSwitch *precharging_switch) { this->precharging_switch_ = precharging_switch; }
 void JkRS485Bms::set_charging_switch(JkRS485BmsSwitch *charging_switch) { this->charging_switch_ = charging_switch; }
@@ -279,9 +114,6 @@ void JkRS485Bms::set_cell_request_float_voltage_time_number(JkRS485BmsNumber *ce
 
 static const char *const TAG = "jk_rs485_bms";
 static const uint8_t MAX_NO_RESPONSE_COUNT = 10;
-static const uint8_t FUNCTION_READ_ALL = 0x06;
-static const uint8_t FUNCTION_WRITE_REGISTER = 0x02;
-static const uint8_t FRAME_VERSION_JK04 = 0x01;
 static const uint8_t FRAME_VERSION_JK02_24S = 0x02;
 static const uint8_t FRAME_VERSION_JK02_32S = 0x03;
 static const uint8_t ERRORS_SIZE = 24;
@@ -313,20 +145,7 @@ static const char *const ERRORS[ERRORS_SIZE] = {
     "PLCModule anomaly",                 // Bit 23
 };
 
-static const uint8_t OPERATION_MODES_SIZE = 4;
-static const char *const OPERATION_MODES[OPERATION_MODES_SIZE] = {
-    "Charging enabled",     // 0x00
-    "Discharging enabled",  // 0x01
-    "Balancer enabled",     // 0x02
-    "Battery dropped",      // 0x03
-};
 
-static const uint8_t BATTERY_TYPES_SIZE = 3;
-static const char *const BATTERY_TYPES[BATTERY_TYPES_SIZE] = {
-    "Lithium Iron Phosphate",  // 0x00
-    "Ternary Lithium",         // 0x01
-    "Lithium Titanate",        // 0x02
-};
 
 void JkRS485Bms::set_sniffer_parent(jk_rs485_sniffer::JkRS485Sniffer* parent)
 {
@@ -1589,14 +1408,8 @@ void JkRS485Bms::publish_device_unavailable_()
   this->publish_state_(battery_strings_sensor_, NAN);
   this->publish_state_(errors_bitmask_sensor_, NAN);
   this->publish_state_(operation_mode_bitmask_sensor_, NAN);
-  this->publish_state_(cell_voltage_overvoltage_delay_sensor_, NAN);
 
-  this->publish_state_(cell_voltage_undervoltage_delay_sensor_, NAN);
   this->publish_state_(cell_pressure_difference_protection_sensor_, NAN);
-  this->publish_state_(discharging_overcurrent_protection_sensor_, NAN);
-  this->publish_state_(discharging_overcurrent_delay_sensor_, NAN);
-  this->publish_state_(charging_overcurrent_protection_sensor_, NAN);
-  this->publish_state_(charging_overcurrent_delay_sensor_, NAN);
   this->publish_state_(balancing_opening_pressure_difference_sensor_, NAN);
   this->publish_state_(powertube_temperature_protection_sensor_, NAN);
   this->publish_state_(powertube_temperature_protection_recovery_sensor_, NAN);
@@ -1609,14 +1422,10 @@ void JkRS485Bms::publish_device_unavailable_()
   this->publish_state_(charging_low_temperature_recovery_sensor_, NAN);
   this->publish_state_(discharging_low_temperature_protection_sensor_, NAN);
   this->publish_state_(discharging_low_temperature_recovery_sensor_, NAN);
-  this->publish_state_(battery_capacity_total_setting_sensor_, NAN);
-  this->publish_state_(charging_sensor_, NAN);
-  this->publish_state_(discharging_sensor_, NAN);
   this->publish_state_(current_calibration_sensor_, NAN);
   this->publish_state_(device_address_sensor_, NAN);
   this->publish_state_(sleep_wait_time_sensor_, NAN);
   this->publish_state_(alarm_low_volume_sensor_, NAN);
-  this->publish_state_(password_sensor_, NAN);
   this->publish_state_(manufacturing_date_sensor_, NAN);
   this->publish_state_(battery_total_runtime_sensor_, NAN);
   this->publish_state_(total_runtime_formatted_text_sensor_, "NAN");
@@ -1744,25 +1553,6 @@ std::string JkRS485Bms::error_bits_to_string_(const uint32_t mask) {
   return errors_list;
 }
 
-std::string JkRS485Bms::mode_bits_to_string_(const uint16_t mask) {
-  bool first = true;
-  std::string modes_list = "";
-
-  if (mask) {
-    for (int i = 0; i < OPERATION_MODES_SIZE; i++) {
-      if (mask & (1 << i)) {
-        if (first) {
-          first = false;
-        } else {
-          modes_list.append(";");
-        }
-        modes_list.append(OPERATION_MODES[i]);
-      }
-    }
-  }
-
-  return modes_list;
-}
 
 void JkRS485Bms::dump_config() {  // NOLINT(google-readability-function-size,readability-function-size)
   /*
@@ -1815,20 +1605,11 @@ void JkRS485Bms::dump_config() {  // NOLINT(google-readability-function-size,rea
   LOG_SENSOR("", "Battery Strings", this->battery_strings_sensor_);
   LOG_SENSOR("", "Errors Bitmask", this->errors_bitmask_sensor_);
   LOG_SENSOR("", "Operation Mode Bitmask", this->operation_mode_bitmask_sensor_);
-  LOG_SENSOR("", "Battery voltage Overvoltage Protection", this->total_voltage_overvoltage_protection_sensor_);
-  LOG_SENSOR("", "Battery voltage Undervoltage Protection", this->total_voltage_undervoltage_protection_sensor_);
   LOG_SENSOR("", "Cell Overvoltage Protection", this->cell_overvoltage_protection_sensor_);
   LOG_SENSOR("", "Cell Overvoltage Protection Recovery", this->cell_overvoltage_protection_recovery_sensor_);
-  LOG_SENSOR("", "Cell Voltage Overvoltage Delay", this->cell_voltage_overvoltage_delay_sensor_);
   LOG_SENSOR("", "Cell Undervoltage Protection", this->cell_undervoltage_protection_number_);
   LOG_SENSOR("", "Cell Undervoltage Protection Recovery", this->cell_undervoltage_protection_recovery_number_);
-  LOG_SENSOR("", "Cell Voltage Undervoltage Delay", this->cell_voltage_undervoltage_delay_sensor_);
   LOG_SENSOR("", "Cell Pressure Difference Protection", this->cell_pressure_difference_protection_sensor_);
-  LOG_SENSOR("", "Discharging Overcurrent Protection", this->discharging_overcurrent_protection_sensor_);
-  LOG_SENSOR("", "Discharging Overcurrent Delay", this->discharging_overcurrent_delay_sensor_);
-  LOG_SENSOR("", "Charging Overcurrent Protection", this->charging_overcurrent_protection_sensor_);
-  LOG_SENSOR("", "Charging Overcurrent Delay", this->charging_overcurrent_delay_sensor_);
-  LOG_SENSOR("", "Balance Starting Voltage", this->cell_balancing_starting_voltage_sensor_);
   LOG_SENSOR("", "BALANCING OPENING PRESSURE DIFFERENCE", this->balancing_opening_pressure_difference_sensor_);
   LOG_SENSOR("", "Temperature powertube Protection", this->powertube_temperature_protection_sensor_);
   LOG_SENSOR("", "Powertube temperature protection recovery", this->powertube_temperature_protection_recovery_sensor_);
@@ -1842,29 +1623,20 @@ void JkRS485Bms::dump_config() {  // NOLINT(google-readability-function-size,rea
   LOG_SENSOR("", "Charging Low Temperature Recovery", this->charging_low_temperature_recovery_sensor_);
   LOG_SENSOR("", "Discharging Low Temperature Protection", this->discharging_low_temperature_protection_sensor_);
   LOG_SENSOR("", "Discharging Low Temperature Recovery", this->discharging_low_temperature_recovery_sensor_);
-  LOG_SENSOR("", "Battery capacity total setting", this->battery_capacity_total_setting_sensor_);
   LOG_SENSOR("", "Current Calibration", this->current_calibration_sensor_);
   LOG_SENSOR("", "Device Address", this->device_address_sensor_);
   LOG_TEXT_SENSOR("", "Battery Type", this->battery_type_text_sensor_);
   LOG_SENSOR("", "Sleep Wait Time", this->sleep_wait_time_sensor_);
   LOG_SENSOR("", "Alarm Low Volume", this->alarm_low_volume_sensor_);
-  LOG_TEXT_SENSOR("", "Password", this->password_text_sensor_);
-  LOG_TEXT_SENSOR("", "Device Type", this->device_type_text_sensor_);
   LOG_SENSOR("", "Manufacturing Date", this->manufacturing_date_sensor_);
   LOG_SENSOR("", "Battery total runtime", this->battery_total_runtime_sensor_);
-  LOG_TEXT_SENSOR("", "Software Version", this->software_version_text_sensor_);
   LOG_SENSOR("", "Start Current Calibration", this->start_current_calibration_sensor_);
-  LOG_TEXT_SENSOR("", "Manufacturer", this->manufacturer_text_sensor_);
   LOG_SENSOR("", "Protocol Version", this->protocol_version_sensor_);
   LOG_SENSOR("", "Protocol Version", this->cell_request_charge_voltage_time_sensor_);
   LOG_SENSOR("", "Protocol Version", this->cell_request_float_voltage_time_sensor_);
   LOG_BINARY_SENSOR("", "Status Balancing", this->status_balancing_binary_sensor_);
-  LOG_BINARY_SENSOR("", "Balancing Switch", this->balancing_switch_binary_sensor_);
   LOG_BINARY_SENSOR("", "Status Charging", this->status_charging_binary_sensor_);
-  LOG_BINARY_SENSOR("", "Charging Switch", this->charging_switch_binary_sensor_);
   LOG_BINARY_SENSOR("", "Status Discharging", this->status_discharging_binary_sensor_);
-  LOG_BINARY_SENSOR("", "Discharging Switch", this->discharging_switch_binary_sensor_);
-  LOG_BINARY_SENSOR("", "Dedicated Charger Switch", this->dedicated_charger_switch_binary_sensor_);
   LOG_TEXT_SENSOR("", "Battery total runtime Formatted", this->total_runtime_formatted_text_sensor_);
   */
 }

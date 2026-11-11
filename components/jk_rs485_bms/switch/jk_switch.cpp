@@ -9,8 +9,6 @@ namespace jk_rs485_bms {
 
 static const char *const TAG = "jk_rs485_bms.switch";
 
-static const uint8_t FUNCTION_WRITE = 0x00;
-static const uint8_t COMMAND_WRITE_REGISTER = 0x05;
 
 
 JkRS485BmsSwitch::JkRS485BmsSwitch(bool initial_state) {

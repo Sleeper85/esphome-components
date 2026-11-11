@@ -54,7 +54,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
 
   virtual ~JkRS485Bms() = default; // Default destroyer
 
-  void JkRS485Bms_init(void);
 
   void set_sniffer_parent(jk_rs485_sniffer::JkRS485Sniffer *parent);
   
@@ -98,21 +97,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   }
   void set_status_heating_binary_sensor(binary_sensor::BinarySensor *status_heating_binary_sensor) {
     status_heating_binary_sensor_ = status_heating_binary_sensor;
-  }
-  void set_balancing_switch_binary_sensor(binary_sensor::BinarySensor *balancing_switch_binary_sensor) {
-    balancing_switch_binary_sensor_ = balancing_switch_binary_sensor;
-  }
-  void set_charging_switch_binary_sensor(binary_sensor::BinarySensor *charging_switch_binary_sensor) {
-    charging_switch_binary_sensor_ = charging_switch_binary_sensor;
-  }
-  void set_precharging_switch_binary_sensor(binary_sensor::BinarySensor *precharging_switch_binary_sensor) {
-    precharging_switch_binary_sensor_ = precharging_switch_binary_sensor;
-  }
-  void set_discharging_switch_binary_sensor(binary_sensor::BinarySensor *discharging_switch_binary_sensor) {
-    discharging_switch_binary_sensor_ = discharging_switch_binary_sensor;
-  }
-  void set_dedicated_charger_switch_binary_sensor(binary_sensor::BinarySensor *dedicated_charger_switch_binary_sensor) {
-    dedicated_charger_switch_binary_sensor_ = dedicated_charger_switch_binary_sensor;
   }
   void set_cell_count_real_sensor(sensor::Sensor *cell_count_real_sensor) {
     cell_count_real_sensor_ = cell_count_real_sensor;
@@ -201,62 +185,14 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   void set_operation_mode_bitmask_sensor(sensor::Sensor *operation_mode_bitmask_sensor) {
     operation_mode_bitmask_sensor_ = operation_mode_bitmask_sensor;
   }
-  void set_total_voltage_overvoltage_protection_sensor(sensor::Sensor *total_voltage_overvoltage_protection_sensor) {
-    total_voltage_overvoltage_protection_sensor_ = total_voltage_overvoltage_protection_sensor;
-  }
-  void set_total_voltage_undervoltage_protection_sensor(sensor::Sensor *total_voltage_undervoltage_protection_sensor) {
-    total_voltage_undervoltage_protection_sensor_ = total_voltage_undervoltage_protection_sensor;
-  }
-  void set_cell_voltage_overvoltage_delay_sensor(sensor::Sensor *cell_voltage_overvoltage_delay_sensor) {
-    cell_voltage_overvoltage_delay_sensor_ = cell_voltage_overvoltage_delay_sensor;
-  }
-  void set_cell_voltage_undervoltage_delay_sensor(sensor::Sensor *cell_voltage_undervoltage_delay_sensor) {
-    cell_voltage_undervoltage_delay_sensor_ = cell_voltage_undervoltage_delay_sensor;
-  }
   void set_cell_pressure_difference_protection_sensor(sensor::Sensor *cell_pressure_difference_protection_sensor) {
     cell_pressure_difference_protection_sensor_ = cell_pressure_difference_protection_sensor;
-  }
-  void set_charging_overcurrent_protection_delay_sensor(sensor::Sensor *charging_overcurrent_protection_delay_sensor) {
-    charging_overcurrent_protection_delay_sensor_ = charging_overcurrent_protection_delay_sensor;
-  }
-  void set_charging_overcurrent_protection_recovery_delay_sensor(sensor::Sensor *charging_overcurrent_protection_recovery_delay_sensor) {
-    charging_overcurrent_protection_recovery_delay_sensor_ = charging_overcurrent_protection_recovery_delay_sensor;
   }
   void set_discharging_overcurrent_protection_delay_sensor(sensor::Sensor *discharging_overcurrent_protection_delay_sensor) {
     discharging_overcurrent_protection_delay_sensor_ = discharging_overcurrent_protection_delay_sensor;
   }
   void set_discharging_overcurrent_protection_recovery_delay_sensor(sensor::Sensor *discharging_overcurrent_protection_recovery_delay_sensor) {
     discharging_overcurrent_protection_recovery_delay_sensor_ = discharging_overcurrent_protection_recovery_delay_sensor;
-  }
-  void set_short_circuit_protection_delay_sensor(sensor::Sensor *short_circuit_protection_delay_sensor) {
-    short_circuit_protection_delay_sensor_ = short_circuit_protection_delay_sensor;
-  }
-  void set_short_circuit_protection_recovery_delay_sensor(sensor::Sensor *short_circuit_protection_recovery_delay_sensor) {
-    short_circuit_protection_recovery_delay_sensor_ = short_circuit_protection_recovery_delay_sensor;
-  }
-  void set_charging_overtemperature_protection_sensor(sensor::Sensor *charging_overtemperature_protection_sensor) {
-    charging_overtemperature_protection_sensor_ = charging_overtemperature_protection_sensor;
-  }
-  void set_charging_overtemperature_protection_recovery_sensor(sensor::Sensor *charging_overtemperature_protection_recovery_sensor) {
-    charging_overtemperature_protection_recovery_sensor_ = charging_overtemperature_protection_recovery_sensor;
-  }
-  void set_discharging_overtemperature_protection_sensor(sensor::Sensor *discharging_overtemperature_protection_sensor) {
-    discharging_overtemperature_protection_sensor_ = discharging_overtemperature_protection_sensor;
-  }
-  void set_discharging_overtemperature_protection_recovery_sensor(sensor::Sensor *discharging_overtemperature_protection_recovery_sensor) {
-    discharging_overtemperature_protection_recovery_sensor_ = discharging_overtemperature_protection_recovery_sensor;
-  }
-  void set_charging_lowtemperature_protection_sensor(sensor::Sensor *charging_lowtemperature_protection_sensor) {
-    charging_lowtemperature_protection_sensor_ = charging_lowtemperature_protection_sensor;
-  }
-  void set_charging_lowtemperature_protection_recovery_sensor(sensor::Sensor *charging_lowtemperature_protection_recovery_sensor) {
-    charging_lowtemperature_protection_recovery_sensor_ = charging_lowtemperature_protection_recovery_sensor;
-  }  
-  void set_mos_overtemperature_protection_sensor(sensor::Sensor *mos_overtemperature_protection_sensor) {
-    mos_overtemperature_protection_sensor_ = mos_overtemperature_protection_sensor;
-  }
-  void set_mos_overtemperature_protection_recovery_sensor(sensor::Sensor *mos_overtemperature_protection_recovery_sensor) {
-    mos_overtemperature_protection_recovery_sensor_ = mos_overtemperature_protection_recovery_sensor;
   }
   void set_discharging_overcurrent_protection_release_time_sensor(sensor::Sensor *discharging_overcurrent_protection_release_time_sensor) {
     discharging_overcurrent_protection_release_time_sensor_ = discharging_overcurrent_protection_release_time_sensor;
@@ -275,9 +211,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   }
   void set_cell_overvoltage_protection_release_time_sensor(sensor::Sensor *cell_overvoltage_protection_release_time_sensor) {
     cell_overvoltage_protection_release_time_sensor_ = cell_overvoltage_protection_release_time_sensor;
-  }
-  void set_cell_balancing_starting_voltage_sensor(sensor::Sensor *cell_balancing_starting_voltage_sensor) {
-    cell_balancing_starting_voltage_sensor_ = cell_balancing_starting_voltage_sensor;
   }
   void set_balancing_opening_pressure_difference_sensor(sensor::Sensor *balancing_opening_pressure_difference_sensor) {
     balancing_opening_pressure_difference_sensor_ = balancing_opening_pressure_difference_sensor;
@@ -323,9 +256,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   }
   void set_discharging_low_temperature_recovery_sensor(sensor::Sensor *discharging_low_temperature_recovery_sensor) {
     discharging_low_temperature_recovery_sensor_ = discharging_low_temperature_recovery_sensor;
-  }
-  void set_battery_capacity_total_setting_sensor(sensor::Sensor *battery_capacity_total_setting_sensor) {
-    battery_capacity_total_setting_sensor_ = battery_capacity_total_setting_sensor;
   }
   void set_current_calibration_sensor(sensor::Sensor *current_calibration_sensor) {
     current_calibration_sensor_ = current_calibration_sensor;
@@ -592,22 +522,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   {
     battery_type_text_sensor_ = battery_type_text_sensor;
   }
-  void set_password_text_sensor(text_sensor::TextSensor *password_text_sensor)
-  {
-    password_text_sensor_ = password_text_sensor;
-  }
-  void set_device_type_text_sensor(text_sensor::TextSensor *device_type_text_sensor)
-  {
-    device_type_text_sensor_ = device_type_text_sensor;
-  }
-  void set_software_version_text_sensor(text_sensor::TextSensor *software_version_text_sensor)
-  {
-    software_version_text_sensor_ = software_version_text_sensor;
-  }
-  void set_manufacturer_text_sensor(text_sensor::TextSensor *manufacturer_text_sensor)
-  {
-    manufacturer_text_sensor_ = manufacturer_text_sensor;
-  }
   void set_total_runtime_formatted_text_sensor(text_sensor::TextSensor *total_runtime_formatted_text_sensor)
   {
     total_runtime_formatted_text_sensor_ = total_runtime_formatted_text_sensor;
@@ -662,7 +576,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   bool settings_frame_received_{false};
   bool device_info_frame_received_{false};
 
-  void on_status_data_(const std::vector<uint8_t> &data);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
   void publish_state_(sensor::Sensor *sensor, float value);
   void publish_state_(JkRS485BmsSwitch *obj, const bool &state);
@@ -680,29 +593,11 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
 
   void decode_jk02_cell_info_(const std::vector<uint8_t> &data);
   void decode_jk02_settings_(const std::vector<uint8_t> &data);
-  void decode_jk04_cell_info_(const std::vector<uint8_t> &data);
   void decode_device_info_(const std::vector<uint8_t> &data);
 
   std::string error_bits_to_string_(uint32_t bitmask);
-  std::string mode_bits_to_string_(uint16_t bitmask);
 
-  float get_temperature_(const uint16_t value)
-  {
-    if (value > 100) return (float) (100 - (int16_t) value);
-    return (float) value;
-  };
 
-  float get_current_(const uint16_t value, const uint8_t protocol_version)
-  {
-    float current = 0.0f;
-    if (protocol_version == 0x01)
-    {
-      if ((value & 0x8000) == 0x8000) current = (float) (value & 0x7FFF);
-      else current = (float) (value & 0x7FFF) * -1;
-    }
-
-    return current;
-  };
 
   std::string format_total_runtime_(float value)
   {
@@ -716,13 +611,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
            (hours ? to_string(hours) + "h" : "");
   }
 
-  float ieee_float_(uint32_t f)
-  {
-    static_assert(sizeof(float) == sizeof f, "`float` has a weird size.");
-    float ret;
-    std::memcpy(&ret, &f, sizeof(float));
-    return ret;
-  }
 
   bool check_bit_of_byte_(uint8_t value, uint8_t position)
   { 
@@ -748,11 +636,7 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     JkRS485BmsSwitch *special_charger_switch_;  
 
     text_sensor::TextSensor *battery_type_text_sensor_;
-    text_sensor::TextSensor *password_text_sensor_;
     text_sensor::TextSensor *info_device_serial_number_text_sensor_;
-    text_sensor::TextSensor *device_type_text_sensor_;
-    text_sensor::TextSensor *software_version_text_sensor_;
-    text_sensor::TextSensor *manufacturer_text_sensor_;
     text_sensor::TextSensor *network_nodes_available_text_sensor_;
     text_sensor::TextSensor *errors_text_sensor_;
     text_sensor::TextSensor *operation_status_text_sensor_;
@@ -763,12 +647,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     text_sensor::TextSensor *info_device_name_text_sensor_;
     text_sensor::TextSensor *info_device_password_text_sensor_;
     text_sensor::TextSensor *info_device_setup_passcode_text_sensor_;
-
-    binary_sensor::BinarySensor *balancing_switch_binary_sensor_;
-    binary_sensor::BinarySensor *precharging_switch_binary_sensor_;
-    binary_sensor::BinarySensor *charging_switch_binary_sensor_;
-    binary_sensor::BinarySensor *discharging_switch_binary_sensor_;
-    binary_sensor::BinarySensor *dedicated_charger_switch_binary_sensor_;
     binary_sensor::BinarySensor *status_online_binary_sensor_;
     binary_sensor::BinarySensor *status_balancing_binary_sensor_;
     binary_sensor::BinarySensor *status_precharging_binary_sensor_;  
@@ -812,22 +690,8 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     sensor::Sensor *emergency_time_countdown_sensor_;
     sensor::Sensor *balancing_direction_sensor_;  
     sensor::Sensor *max_discharging_current_sensor_;
-    sensor::Sensor *charging_overcurrent_protection_delay_sensor_;
-    sensor::Sensor *charging_overcurrent_protection_recovery_delay_sensor_;  
     sensor::Sensor *discharging_overcurrent_protection_delay_sensor_;
     sensor::Sensor *discharging_overcurrent_protection_recovery_delay_sensor_;  
-    sensor::Sensor *short_circuit_protection_delay_sensor_;
-    sensor::Sensor *short_circuit_protection_recovery_delay_sensor_;
-    sensor::Sensor *charging_overtemperature_protection_sensor_;
-    sensor::Sensor *charging_overtemperature_protection_recovery_sensor_;
-    sensor::Sensor *discharging_overtemperature_protection_sensor_;
-    sensor::Sensor *discharging_overtemperature_protection_recovery_sensor_;
-    sensor::Sensor *charging_lowtemperature_protection_sensor_;
-    sensor::Sensor *charging_lowtemperature_protection_recovery_sensor_;
-    sensor::Sensor *mos_overtemperature_protection_sensor_;
-    sensor::Sensor *mos_overtemperature_protection_recovery_sensor_;  
-    sensor::Sensor *scp_recovery_time_number_;    
-    sensor::Sensor *total_battery_capacity_number_;  
     sensor::Sensor *discharging_overcurrent_protection_release_time_sensor_;
     sensor::Sensor *discharging_short_circuit_protection_release_time_sensor_;
     sensor::Sensor *charging_overcurrent_protection_release_time_sensor_;
@@ -861,16 +725,7 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     sensor::Sensor *battery_strings_sensor_;
     sensor::Sensor *errors_bitmask_sensor_;
     sensor::Sensor *operation_mode_bitmask_sensor_;
-    sensor::Sensor *total_voltage_overvoltage_protection_sensor_;
-    sensor::Sensor *total_voltage_undervoltage_protection_sensor_;
-    sensor::Sensor *cell_voltage_overvoltage_delay_sensor_;
-    sensor::Sensor *cell_voltage_undervoltage_delay_sensor_;
     sensor::Sensor *cell_pressure_difference_protection_sensor_;
-    sensor::Sensor *discharging_overcurrent_protection_sensor_;
-    sensor::Sensor *discharging_overcurrent_delay_sensor_;
-    sensor::Sensor *charging_overcurrent_protection_sensor_;
-    sensor::Sensor *charging_overcurrent_delay_sensor_;
-    sensor::Sensor *cell_balancing_starting_voltage_sensor_;
     sensor::Sensor *balancing_opening_pressure_difference_sensor_;
     sensor::Sensor *powertube_temperature_protection_sensor_;
     sensor::Sensor *powertube_temperature_protection_recovery_sensor_;
@@ -883,15 +738,11 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     sensor::Sensor *charging_low_temperature_recovery_sensor_;
     sensor::Sensor *discharging_low_temperature_protection_sensor_;
     sensor::Sensor *discharging_low_temperature_recovery_sensor_;
-    sensor::Sensor *battery_capacity_total_setting_sensor_;
     sensor::Sensor *battery_soh_valuation_sensor_;
-    sensor::Sensor *charging_sensor_;
-    sensor::Sensor *discharging_sensor_;
     sensor::Sensor *current_calibration_sensor_;
     sensor::Sensor *device_address_sensor_;
     sensor::Sensor *sleep_wait_time_sensor_;
     sensor::Sensor *alarm_low_volume_sensor_;
-    sensor::Sensor *password_sensor_;
     sensor::Sensor *manufacturing_date_sensor_;
     sensor::Sensor *battery_total_runtime_sensor_;
     sensor::Sensor *start_current_calibration_sensor_;

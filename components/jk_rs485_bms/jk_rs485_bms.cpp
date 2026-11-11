@@ -1236,7 +1236,7 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
 
   // 134 [128] 4   0xDC 0x05 0x00 0x00    SCP DELAY (us)
   // ESP_LOGI(TAG, "  SCP DELAY: %f us", (float) jk_get_32bit(134) * 0.001f);
-  temp_param_value=uint32_to_float(&data[134])*0.001f;   
+  temp_param_value=uint32_to_float(&data[134]);   // us
   this->publish_state_(this->short_circuit_protection_delay_number_, temp_param_value); ///(float) jk_get_32bit(134) * 0.001f);
 
   // 138 [132]  4   0xE4 0x0C 0x00 0x00    Start balance voltage

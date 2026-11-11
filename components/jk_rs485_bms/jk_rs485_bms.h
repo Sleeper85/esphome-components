@@ -1,5 +1,5 @@
-// Updated : 2025.01.25
-// Version : 1.1.1
+// Updated : 2026.11.11
+// Version : 1.2.0
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -204,8 +204,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
     uart2_protocol_number_sensor_ = uart2_protocol_number_sensor;
   }
 
-  // void set_battery_total_alarms_count(uint8_t battery_total_alarms_count) { battery_total_alarms_count_ = battery_total_alarms_count; }
-  // void set_battery_total_alarms_active(uint8_t battery_total_alarms_active) { battery_total_alarms_active_ = battery_total_alarms_active; }  
 
   // ALARMS
   void set_alarm_wireres_binary_sensor(binary_sensor::BinarySensor *alarm_wireres_binary_sensor)
@@ -432,7 +430,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
 
   void update() override;
 
-  //bool write_register(uint8_t address, uint32_t value, uint8_t length);
 
  protected:
   jk_rs485_sniffer::JkRS485Sniffer *parent_;
@@ -441,7 +438,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   uint8_t battery_total_alarms_count_;
   uint8_t battery_total_alarms_active_;
   std::string nodes_available;
-  //std::vector<JkRS485BmsSwitch *> switches_; 
 
   struct CellInfo
   {
@@ -490,7 +486,6 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   void decode_device_info_(const std::vector<uint8_t> &data);
 
   std::string error_bits_to_string_(uint32_t bitmask);
-
 
 
   std::string format_total_runtime_(float value)

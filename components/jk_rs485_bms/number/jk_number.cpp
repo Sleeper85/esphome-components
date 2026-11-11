@@ -1,3 +1,20 @@
+// Updated : 2026.11.11
+// Version : 1.2.0
+// GitHub  : https://github.com/Sleeper85/esphome-components
+
+// This YAML is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <http://www.gnu.org/licenses/gpl.html>.
+
 #include "jk_number.h"
 #include "esphome/core/log.h"
 #include <cmath>
@@ -45,7 +62,6 @@ void JkRS485BmsNumber::control(float value) {
   }
   
 
-  //if (this->parent_->get_protocol_version() == PROTOCOL_VERSION_JK02_32S && this->register_address_) {
 
 }
 

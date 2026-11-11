@@ -1,5 +1,5 @@
 // Updated : 2026.11.11
-// Version : 1.2.1
+// Version : 1.2.2
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -156,14 +156,12 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
 class JkRS485SnifferDevice {
  public:
   void set_parent(JkRS485Sniffer *parent) { parent_ = parent; }
-  // void set_address(uint8_t address) { address_ = address; }
   virtual void on_jk_rs485_sniffer_data(const uint8_t &origin_address, const uint8_t &frame_type, const std::vector<uint8_t> &data, const std::string &nodes_available) = 0;
 
  protected:
   friend JkRS485Sniffer;
 
   JkRS485Sniffer *parent_{nullptr};
-  //uint8_t address_;
 };
 
 }  // namespace jk_rs485_sniffer

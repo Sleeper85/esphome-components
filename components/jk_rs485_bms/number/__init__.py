@@ -1,5 +1,5 @@
 # Updated : 2026.11.11
-# Version : 1.2.0
+# Version : 1.2.1
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -150,7 +150,6 @@ JK_RS485_NUMBER_SCHEMA = (
     .extend(
         {
             cv.Optional(CONF_MODE, default="BOX"): cv.enum(number.NUMBER_MODES, upper=True),
-            # cv.Optional(CONF_STEP, default=0.01): cv.float_,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)

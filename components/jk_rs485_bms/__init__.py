@@ -1,5 +1,5 @@
-# Updated : 2025.12.22
-# Version : 1.1.1
+# Updated : 2026.11.11
+# Version : 1.2.0
 # GitHub  : https://github.com/Sleeper85/esphome-components
 
 import esphome.codegen as cg
@@ -41,5 +41,4 @@ async def to_code(config):
     await jk_rs485_sniffer.register_jk_rs485_bms_device(var, config)      # register the SNIFFER_DEVICE
     cg.add(var.set_address(config[CONF_RS485_ADDRESS]))                   #JK_RS485_BMS --> address
     hub = await cg.get_variable(config[CONF_JK_RS485_SNIFFER_ID])
-    #cg.add(getattr(hub, f"set_bms")(var))
     cg.add(var.set_sniffer_parent(hub))    

@@ -1,5 +1,5 @@
 // Updated : 2026.11.11
-// Version : 1.2.0
+// Version : 1.2.1
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -44,12 +44,6 @@ class JkRS485BmsSwitch : public switch_::Switch, public Component {
   void loop() override {}
   float get_setup_priority() const override { return setup_priority::DATA; }
 
-  //void trigger_switch2bms_event(const std::string &event, uint8_t frame_type);
-
-  //void write_state(bool state) override {
-  //  this->state = state;
-  //  this->publish_state(state);
-  //}
 
   void write_state(bool state) override;
   

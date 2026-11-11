@@ -1,5 +1,5 @@
-// Updated : 2026.11.11
-// Version : 1.2.0
+// Updated : 2026.11.12
+// Version : 1.2.1
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -467,6 +467,7 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   bool device_info_frame_received_{false};
 
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);
+  void invalidate_state_(binary_sensor::BinarySensor *binary_sensor);
   void publish_state_(sensor::Sensor *sensor, float value);
   void publish_state_(JkRS485BmsSwitch *obj, const bool &state);
   void publish_state_(JkRS485BmsNumber *number, float value);  

@@ -1,5 +1,5 @@
-// Updated : 2026.11.11
-// Version : 1.2.1
+// Updated : 2026.11.12
+// Version : 1.2.2
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -1140,43 +1140,42 @@ void JkRS485Bms::publish_device_unavailable_()
 {
   this->settings_frame_received_ = false;
   this->device_info_frame_received_ = false;
-  this->publish_state_(status_online_binary_sensor_, NAN);
-  this->publish_state_(status_balancing_binary_sensor_, NAN);
-  this->publish_state_(status_precharging_binary_sensor_, NAN);  
-  this->publish_state_(status_charging_binary_sensor_, NAN);
-  this->publish_state_(status_discharging_binary_sensor_, NAN);
-  this->publish_state_(status_heating_binary_sensor_, NAN);
+  this->invalidate_state_(status_balancing_binary_sensor_);
+  this->invalidate_state_(status_precharging_binary_sensor_);  
+  this->invalidate_state_(status_charging_binary_sensor_);
+  this->invalidate_state_(status_discharging_binary_sensor_);
+  this->invalidate_state_(status_heating_binary_sensor_);
 
-  this->publish_state_(alarm_wireres_binary_sensor_, NAN);
-  this->publish_state_(alarm_mosotp_binary_sensor_, NAN);
-  this->publish_state_(alarm_cellquantity_binary_sensor_, NAN);
-  this->publish_state_(alarm_cursensorerr_binary_sensor_, NAN);
-  this->publish_state_(alarm_cellovp_binary_sensor_, NAN);
-  this->publish_state_(alarm_batovp_binary_sensor_, NAN);
-  this->publish_state_(alarm_chocp_binary_sensor_, NAN);
-  this->publish_state_(alarm_chscp_binary_sensor_, NAN);
-  this->publish_state_(alarm_chotp_binary_sensor_, NAN);
-  this->publish_state_(alarm_chutp_binary_sensor_, NAN);
-  this->publish_state_(alarm_cpuauxcommuerr_binary_sensor_, NAN);
-  this->publish_state_(alarm_celluvp_binary_sensor_, NAN);
-  this->publish_state_(alarm_batuvp_binary_sensor_, NAN);
-  this->publish_state_(alarm_dchocp_binary_sensor_, NAN);
-  this->publish_state_(alarm_dchscp_binary_sensor_, NAN);
-  this->publish_state_(alarm_dchotp_binary_sensor_, NAN);
-  this->publish_state_(alarm_chargemos_binary_sensor_, NAN);
-  this->publish_state_(alarm_dischargemos_binary_sensor_, NAN);
-  this->publish_state_(alarm_gpsdisconneted_binary_sensor_, NAN);
-  this->publish_state_(alarm_modifypwdintime_binary_sensor_, NAN);
-  this->publish_state_(alarm_dischargeonfailed_binary_sensor_, NAN);
-  this->publish_state_(alarm_batteryovertemp_binary_sensor_, NAN);
-  this->publish_state_(alarm_temperaturesensoranomaly_binary_sensor_, NAN);
-  this->publish_state_(alarm_plcmoduleanomaly_binary_sensor_, NAN);
-  this->publish_state_(alarm_mostempsensorabsent_binary_sensor_, NAN);
-  this->publish_state_(alarm_battempsensor1absent_binary_sensor_, NAN);
-  this->publish_state_(alarm_battempsensor2absent_binary_sensor_, NAN);
-  this->publish_state_(alarm_battempsensor3absent_binary_sensor_, NAN);
-  this->publish_state_(alarm_battempsensor4absent_binary_sensor_, NAN);
-  this->publish_state_(alarm_battempsensor5absent_binary_sensor_, NAN); 
+  this->invalidate_state_(alarm_wireres_binary_sensor_);
+  this->invalidate_state_(alarm_mosotp_binary_sensor_);
+  this->invalidate_state_(alarm_cellquantity_binary_sensor_);
+  this->invalidate_state_(alarm_cursensorerr_binary_sensor_);
+  this->invalidate_state_(alarm_cellovp_binary_sensor_);
+  this->invalidate_state_(alarm_batovp_binary_sensor_);
+  this->invalidate_state_(alarm_chocp_binary_sensor_);
+  this->invalidate_state_(alarm_chscp_binary_sensor_);
+  this->invalidate_state_(alarm_chotp_binary_sensor_);
+  this->invalidate_state_(alarm_chutp_binary_sensor_);
+  this->invalidate_state_(alarm_cpuauxcommuerr_binary_sensor_);
+  this->invalidate_state_(alarm_celluvp_binary_sensor_);
+  this->invalidate_state_(alarm_batuvp_binary_sensor_);
+  this->invalidate_state_(alarm_dchocp_binary_sensor_);
+  this->invalidate_state_(alarm_dchscp_binary_sensor_);
+  this->invalidate_state_(alarm_dchotp_binary_sensor_);
+  this->invalidate_state_(alarm_chargemos_binary_sensor_);
+  this->invalidate_state_(alarm_dischargemos_binary_sensor_);
+  this->invalidate_state_(alarm_gpsdisconneted_binary_sensor_);
+  this->invalidate_state_(alarm_modifypwdintime_binary_sensor_);
+  this->invalidate_state_(alarm_dischargeonfailed_binary_sensor_);
+  this->invalidate_state_(alarm_batteryovertemp_binary_sensor_);
+  this->invalidate_state_(alarm_temperaturesensoranomaly_binary_sensor_);
+  this->invalidate_state_(alarm_plcmoduleanomaly_binary_sensor_);
+  this->invalidate_state_(alarm_mostempsensorabsent_binary_sensor_);
+  this->invalidate_state_(alarm_battempsensor1absent_binary_sensor_);
+  this->invalidate_state_(alarm_battempsensor2absent_binary_sensor_);
+  this->invalidate_state_(alarm_battempsensor3absent_binary_sensor_);
+  this->invalidate_state_(alarm_battempsensor4absent_binary_sensor_);
+  this->invalidate_state_(alarm_battempsensor5absent_binary_sensor_); 
 
   this->publish_state_(cell_smart_sleep_voltage_number_, NAN);
   this->publish_state_(cell_undervoltage_protection_number_, NAN);
@@ -1253,6 +1252,15 @@ void JkRS485Bms::publish_state_(binary_sensor::BinarySensor *binary_sensor, cons
     return;
 
   binary_sensor->publish_state(state);
+}
+
+// Clears the state (has_state() becomes false) : Home Assistant shows the entity as unknown.
+// Publishing NAN instead would convert it to true and turn every alarm on.
+void JkRS485Bms::invalidate_state_(binary_sensor::BinarySensor *binary_sensor) {
+  if (binary_sensor == nullptr)
+    return;
+
+  binary_sensor->invalidate_state();
 }
 
 //

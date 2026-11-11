@@ -50,7 +50,7 @@ static const uint16_t TIME_BEFORE_NEXT_POOLING_MILLISENCONDS=750;
 static const uint16_t TIME_BETWEEN_CONSECUTIVE_REQUEST_SENDINGS_TO_SAME_SLAVE=2500;
 
 
-static const uint16_t TIME_BETWEEN_NETWORK_SCAN_MILLISECONDS=500;  // mejorar
+static const uint16_t TIME_BETWEEN_NETWORK_SCAN_MILLISECONDS=500;  // to improve
 static const uint16_t NO_MESSAGE_RECEIVED_TIME_SET_AS_UNAVAILABLE_MILLISECONDS = 10000;
 
 std::vector<unsigned char> pattern_response_header = {0x55, 0xAA, 0xEB, 0x90};
@@ -93,10 +93,10 @@ void JkRS485Sniffer::set_broadcast_changes_to_all_bms(bool state) {
     this->broadcast_changes_to_all_bms_ = state;
     if (state) {
       ESP_LOGD(TAG, "Broadcast to All BMSs ACTIVATED");
-      // Aquí puedes añadir el código que se ejecuta cuando se activa
+      // Code to run on activation can be added here
     } else {
       ESP_LOGD(TAG, "Broadcast to All BMSs DEACTIVATED");
-      // Aquí puedes añadir el código que se ejecuta cuando se desactiva
+      // Code to run on deactivation can be added here
     }
 }
 
@@ -271,7 +271,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Enviar el array de bytes por UART
+//  // Send the byte array via UART
   std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
 
   if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
@@ -310,7 +310,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Enviar el array de bytes por UART
+//  // Send the byte array via UART
   std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
 
   if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
@@ -349,7 +349,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t s
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-//  // Enviar el array de bytes por UART
+//  // Send the byte array via UART
   std::vector<uint8_t> data_to_send(frame, frame + size / sizeof(frame[0]));
 
   if (talk_pin_needed_) { this->talk_pin_->digital_write(1); }
@@ -690,10 +690,10 @@ void JkRS485Sniffer::loop() {
 
 std::string JkRS485Sniffer::nodes_available_to_string() {
     std::string bufferHex;
-    bufferHex.reserve(17); // Reservar espacio para 16 caracteres + 1 para el carácter nulo
+    bufferHex.reserve(17); // Reserve space for the 16 characters
     uint8_t number_of_nodes_available=0;
     for (uint8_t cont = 0; cont < 16; cont++) {
-        // Volcar el contenido del buffer en el string en formato hexadecimal
+        // Dump the buffer content into the string
         if (this->rs485_network_node[cont].available) {
             bufferHex.push_back('1');
             number_of_nodes_available++;
@@ -729,7 +729,7 @@ void JkRS485Sniffer::printBuffer(uint16_t max_length){
   std::string bufferHex;
 
   bufferHex="";
-  // Volcar el contenido del buffer en el string en formato hexadecimal
+  // Dump the buffer content into the string
   for (auto byte : this->rx_buffer_) {
       char hexByte[3];
       sprintf(hexByte, "%02X", byte);

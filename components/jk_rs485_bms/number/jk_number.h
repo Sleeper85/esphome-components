@@ -1,5 +1,5 @@
 // Updated : 2026.11.11
-// Version : 1.2.0
+// Version : 1.2.1
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -28,11 +28,11 @@ class JkRS485Bms;
 
 class JkRS485BmsNumber : public number::Number, public Component {
  public:
-  // Constructor por defecto necesario para crear instancias sin argumentos
+  // Default constructor required to create instances without arguments
   JkRS485BmsNumber() = default;
 
   explicit JkRS485BmsNumber(bool initial_state);
-  virtual ~JkRS485BmsNumber() = default; // Destructor por defecto
+  virtual ~JkRS485BmsNumber() = default; // Default destructor
 
 
   void set_parent(JkRS485Bms *parent) { this->parent_ = parent; };

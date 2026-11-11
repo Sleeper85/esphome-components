@@ -1142,7 +1142,7 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
   this->publish_state_(this->max_charging_current_number_, temp_param_value); ///(float) jk_get_32bit(50) * 0.001f);
 
   // 54 [48]   4   0x1E 0x00 0x00 0x00    Charge OCP delay                    TIMBatCOCPDly   Charging Overcurrent
-  // 0x0030 48  UINT32 4 RW充电过流保护延迟TIMBatCOCPDly    S
+  // 0x0030 48  UINT32 4 RW TIMBatCOCPDly (charging overcurrent protection delay)    S
   // 02.10.10.     30.00.      02.04.            00.00.00.03.        72.3E      <=====
   // Protection Delay (s)
   temp_param_value = uint32_to_float(&data[54]);  
@@ -1156,7 +1156,7 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
   this->publish_state_(this->charging_overcurrent_protection_recovery_delay_number_,  temp_param_value); ///(float) jk_get_32bit(58));
   
   // 62 [56]   4   0xF0 0x49 0x02 0x00    Max. discharge current CurBatDcOC
-  // 0x0038 56 UINT32 4 RW持续放电电流CurBatDcOC    mA
+  // 0x0038 56 UINT32 4 RW CurBatDcOC (continuous discharging current)    mA
   // 02.10.10.    38.00.      02.04.             00.00.04.4C.         30.AC.          (044C=1100)
 
   temp_param_value = uint32_to_float(&data[62]) * 0.001f;   
@@ -1661,8 +1661,8 @@ void JkRS485Bms::publish_state_(sensor::Sensor *sensor, float value) {
 
   //ESP_LOGD(TAG, "  --------------------------------------- TRYING     0x%02X ", reinterpret_cast<uintptr_t>(sensor));
   //sensor->publish_state(value);
-  ////ESP_LOGD("JkRS485Bms", "Publicación exitosa para el sensor: %s", sensor->get_name().c_str());
-  //ESP_LOGD("JkRS485Bms", "Publicación exitosa para el sensor");
+  ////ESP_LOGD("JkRS485Bms", "Successful publish for the sensor: %s", sensor->get_name().c_str());
+  //ESP_LOGD("JkRS485Bms", "Successful publish for the sensor");
 }
 
 void JkRS485Bms::publish_state_(JkRS485BmsSwitch *obj, const bool &state) {

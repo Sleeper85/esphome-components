@@ -27,14 +27,14 @@
 namespace esphome {
 namespace jk_rs485_bms {
 
-class JkRS485Bms;  // Declaración anticipada
+class JkRS485Bms;  // Forward declaration
 class JkRS485BmsSwitch : public switch_::Switch, public Component {
  public:
-  // Constructor por defecto necesario para crear instancias sin argumentos
+  // Default constructor required to create instances without arguments
   JkRS485BmsSwitch() = default;
 
   explicit JkRS485BmsSwitch(bool initial_state);
-  virtual ~JkRS485BmsSwitch() = default; // Destructor por defecto
+  virtual ~JkRS485BmsSwitch() = default; // Default destructor
 
   void set_parent(JkRS485Bms *parent) { this->parent_ = parent; };
   void set_register_address(uint16_t register_address) { this->register_address_ = register_address; };

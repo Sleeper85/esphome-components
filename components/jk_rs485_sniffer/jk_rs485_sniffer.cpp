@@ -51,6 +51,9 @@ static const uint16_t TIME_BETWEEN_CONSECUTIVE_REQUEST_SENDINGS_TO_SAME_SLAVE=25
 
 static const uint16_t TIME_BETWEEN_NETWORK_SCAN_MILLISECONDS=500;  // to improve
 static const uint16_t NO_MESSAGE_RECEIVED_TIME_SET_AS_UNAVAILABLE_MILLISECONDS = 10000;
+// Mode 2 : a node is set unavailable after this number of consecutive polls without answer.
+// A time limit does not work there : with many BMSs, each one is only polled every few seconds
+static const uint8_t MAX_MISSED_REQUESTS = 3;
 
 // Result of one manage_rx_buffer_() pass
 enum RxParseResult : uint8_t {
@@ -381,6 +384,22 @@ void JkRS485Sniffer::send_request_to_slave(uint8_t address, uint8_t frame_type)
     uint16_t computed_checksum = crc16_c(frame, 9);
     frame[9] = ((computed_checksum & 0xFF00)>>8);
     frame[10] = ((computed_checksum & 0x00FF)>>0);
+
+    // Mode 2 : count the polls of an available node that got no frame since the previous poll.
+    // The scan of unavailable nodes and the requests sent in Mode 1 are not counted
+    if (this->act_as_master && address <= 15 && this->rs485_network_node[address].available) {
+      struct_rs485_network_node &node = this->rs485_network_node[address];
+      if (node.last_poll_sent != 0 && (int32_t) (node.last_message_received - node.last_poll_sent) < 0) {
+        node.missed_requests++;
+        if (node.missed_requests >= MAX_MISSED_REQUESTS) {
+          ESP_LOGW(TAG, "No answer from address 0x%02X to %u consecutive requests, set as unavailable", address,
+                   (unsigned) node.missed_requests);
+          node.missed_requests = 0;
+          this->set_node_availability(address, 0);
+        }
+      }
+      node.last_poll_sent = millis();
+    }
 
     ESP_LOGV(TAG, "MESSAGE REQUEST TO SEND>>: %s",format_hex_pretty(frame, 11).c_str());
     this->send_frame_(frame, sizeof(frame), address);
@@ -866,6 +885,7 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
     // The address is a raw byte from the wire, only range-checked below
     if (address <= 15) {
       this->rs485_network_node[address].last_message_received = now;
+      this->rs485_network_node[address].missed_requests = 0;
     }
     if (address == 0) {
       last_master_activity = now;

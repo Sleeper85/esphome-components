@@ -57,6 +57,8 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
         rs485_network_node[cont].counter_cell_info_received=0;
         rs485_network_node[cont].counter_device_settings_received=0;
         rs485_network_node[cont].counter_device_info_received=0;  
+        rs485_network_node[cont].last_poll_sent=0;
+        rs485_network_node[cont].missed_requests=0;
     }
 
     last_master_activity=0;
@@ -142,6 +144,8 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
      uint16_t counter_cell_info_received;
      uint16_t counter_device_settings_received;
      uint16_t counter_device_info_received;      
+     uint32_t last_poll_sent;            // last cell info / settings / device info request (not the writes)
+     uint8_t missed_requests;            // consecutive polls without any frame received, Mode 2 only
   };
 
   struct struct_rs485_network_node rs485_network_node[16];

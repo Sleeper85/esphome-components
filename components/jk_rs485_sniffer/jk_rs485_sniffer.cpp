@@ -897,7 +897,7 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
       
     }
 
-    std::vector<uint8_t> data(this->rx_buffer_.begin() + 0, this->rx_buffer_.begin() + this->rx_buffer_.size()+1);
+    std::vector<uint8_t> data(this->rx_buffer_.begin() + 0, this->rx_buffer_.begin() + JKPB_RS485_RESPONSE_SIZE);
     
     ESP_LOGD(TAG, "Frame received from SLAVE (type: 0x%02X, %d bytes) %02X address", raw[4], data.size(),address);
     ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());

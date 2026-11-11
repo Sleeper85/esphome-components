@@ -1,5 +1,5 @@
-// Updated : 2025.01.26
-// Version : 1.1.2
+// Updated : 2026.11.11
+// Version : 1.2.0
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -1199,11 +1199,14 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
   temp_param_value=int32_to_float(&data[106])*0.1f;
   //ESP_LOGI(TAG, "  MOS OTP: %f °C", temp_param_value);
   this->publish_state_(this->mos_overtemperature_protection_number_, temp_param_value);
+  // Read-only mirror of the same value
+  this->publish_state_(this->powertube_temperature_protection_sensor_, temp_param_value);
 
   // 110 [104]   4   0xBC 0x02 0x00 0x00    MOS OTP Recovery
   temp_param_value=int32_to_float(&data[110])*0.1f;
   //ESP_LOGI(TAG, "  MOS OTP recovery: %f °C", temp_param_value);
   this->publish_state_(this->mos_overtemperature_protection_recovery_number_, temp_param_value);
+  this->publish_state_(this->powertube_temperature_protection_recovery_sensor_, temp_param_value);
 
   // 114 [108]  4   0x0D 0x00 0x00 0x00    cell count settings
   temp_param_value=uint32_to_float(&data[114]);  

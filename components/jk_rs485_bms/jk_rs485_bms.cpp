@@ -396,6 +396,14 @@ void JkRS485Bms::trigger_bms2sniffer_switch16_event(std::uint16_t register_addre
 
   uint16_t value_to_send=0;
 
+  // The 10 switches share one register : it is rewritten as a whole from the local states,
+  // which are only valid once the settings frame has been decoded
+  if (!this->settings_frame_received_)
+  {
+    ESP_LOGW(TAG, "BMS address %02X : switch not written, settings frame not received yet", this->address_);
+    return;
+  }
+
   if (
     (this->heating_switch_ != nullptr) && (this->heating_switch_->is_ready()) &&
     (this->disable_temperature_sensors_switch_ != nullptr) && (this->disable_temperature_sensors_switch_->is_ready()) &&
@@ -442,6 +450,16 @@ void JkRS485Bms::trigger_bms2sniffer_number16_event(std::uint16_t register_addre
   }
 
   uint16_t value_to_send=0;
+
+  // Both times share one register : it is rewritten as a whole from the local states,
+  // which are only valid once the device info frame has been decoded
+  if (!this->device_info_frame_received_ ||
+      this->cell_request_charge_voltage_time_number_ == nullptr || std::isnan(this->cell_request_charge_voltage_time_number_->state) ||
+      this->cell_request_float_voltage_time_number_ == nullptr || std::isnan(this->cell_request_float_voltage_time_number_->state))
+  {
+    ESP_LOGW(TAG, "BMS address %02X : time not written, device info frame not received yet", this->address_);
+    return;
+  }
 
   if (
     (this->cell_request_charge_voltage_time_number_ != nullptr) && (this->cell_request_charge_voltage_time_number_->is_ready()) &&
@@ -1383,6 +1401,7 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
   // 294   4   0x00 0x00 0x00 0x00
   // 298   1   0x00
   // 299   1   0x40                   CHECKSUM
+  this->settings_frame_received_ = true;
   this->trigger_bms2sniffer_event("WORKING ! #####",01);  
 }
 
@@ -1439,6 +1458,7 @@ void JkRS485Bms::decode_device_info_(const std::vector<uint8_t> &data)
   this->publish_state_(this->cell_request_charge_voltage_time_number_, (float) data[266]*0.1f);
   this->publish_state_(this->cell_request_float_voltage_time_number_, (float) data[267]*0.1f);
 
+  this->device_info_frame_received_ = true;
   this->trigger_bms2sniffer_event("WORKING ! #####",03);  
 }
 
@@ -1462,6 +1482,8 @@ void JkRS485Bms::reset_status_online_tracker_() {
 
 void JkRS485Bms::publish_device_unavailable_()
 {
+  this->settings_frame_received_ = false;
+  this->device_info_frame_received_ = false;
   this->publish_state_(status_online_binary_sensor_, NAN);
   this->publish_state_(status_balancing_binary_sensor_, NAN);
   this->publish_state_(status_precharging_binary_sensor_, NAN);  

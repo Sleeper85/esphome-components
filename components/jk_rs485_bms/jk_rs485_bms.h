@@ -658,6 +658,9 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   Temperature temperatures_[5];
 
   uint8_t no_response_count_{0};
+  // Set once the frame holding the values of the grouped registers has been decoded
+  bool settings_frame_received_{false};
+  bool device_info_frame_received_{false};
 
   void on_status_data_(const std::vector<uint8_t> &data);
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);

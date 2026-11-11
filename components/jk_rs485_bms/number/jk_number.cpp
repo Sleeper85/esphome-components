@@ -1,5 +1,6 @@
 #include "jk_number.h"
 #include "esphome/core/log.h"
+#include <cmath>
 
 namespace esphome {
 namespace jk_rs485_bms {
@@ -28,7 +29,7 @@ void JkRS485BmsNumber::control(float value) {
       } else {
         if (this->data_length_==4){
           //uint32_t
-          uint32_t value_to_send= (uint32_t) (value * std::pow(10, this->factor_));
+          uint32_t value_to_send= (uint32_t) std::lround(value * std::pow(10, this->factor_));
           this->parent_->trigger_bms2sniffer_switch_or_number_uint32_event(this->register_address_,this->third_element_of_frame_, value_to_send);
         }
       }
@@ -38,7 +39,7 @@ void JkRS485BmsNumber::control(float value) {
       //INT
       if (this->type_==1){
         //int32_t
-        int32_t value_to_send= (int32_t) (value * std::pow(10, this->factor_));
+        int32_t value_to_send= (int32_t) std::lround(value * std::pow(10, this->factor_));
         this->parent_->trigger_bms2sniffer_switch_or_number_int32_event(this->register_address_,this->third_element_of_frame_, value_to_send);
       }    
   }

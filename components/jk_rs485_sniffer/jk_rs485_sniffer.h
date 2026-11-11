@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <deque>
+
 #include "esphome/core/component.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/log.h"
@@ -113,6 +115,8 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
   void detected_master_activity_now(void);
   void send_request_to_slave(uint8_t node_address, uint8_t frame_type);
   void send_frame_(const uint8_t *frame, size_t size, uint8_t address);
+  void enqueue_write_(const uint8_t *frame, size_t size, uint8_t address);
+  bool send_next_write_(void);
   
   bool calculate_next_pooling(void);
   int found_next_node_to_discover(void);
@@ -126,6 +130,14 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
   uint32_t rx_preamble_drop_{0};
   uint32_t rx_frames_ok_{0};
   bool broadcast_changes_to_all_bms_{false};
+
+  // Writes to the BMSs (numbers, switches), sent one per bus silence by loop()
+  struct PendingWrite {
+    uint8_t frame[13];
+    uint8_t size;
+    uint8_t address;
+  };
+  std::deque<PendingWrite> write_queue_;
   uint32_t last_jk_rs485_network_activity_{0};
   uint32_t last_jk_rs485_pooling_trial_{0};
   std::vector<JkRS485SnifferDevice *> devices_;  

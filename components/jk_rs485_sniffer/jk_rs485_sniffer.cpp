@@ -17,6 +17,8 @@
 
 #include "jk_rs485_sniffer.h"
 
+#include <cstring>
+
 
 namespace esphome {
 namespace jk_rs485_sniffer {
@@ -54,6 +56,8 @@ static const uint16_t NO_MESSAGE_RECEIVED_TIME_SET_AS_UNAVAILABLE_MILLISECONDS =
 // Mode 2 : a node is set unavailable after this number of consecutive polls without answer.
 // A time limit does not work there : with many BMSs, each one is only polled every few seconds
 static const uint8_t MAX_MISSED_REQUESTS = 3;
+// Writes waiting for a bus silence : 15 BMSs in broadcast mode take 15 entries per change
+static const size_t WRITE_QUEUE_MAX_SIZE = 32;
 
 // Result of one manage_rx_buffer_() pass
 enum RxParseResult : uint8_t {
@@ -191,7 +195,6 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint32_event(std::uint8
   if (this->broadcast_changes_to_all_bms_==true){
     for (uint8_t j = 1; j < 16; ++j) {
         if (rs485_network_node[j].available && slave_address!=j) {
-            delayMicroseconds(50000);
             send_command_switch_or_number_to_slave_uint32(j,third_element_of_frame,register_address,value);
         }
     }
@@ -223,7 +226,6 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_int32_event(std::uint8_
   if (this->broadcast_changes_to_all_bms_==true){
     for (uint8_t j = 1; j < 16; ++j) {
         if (rs485_network_node[j].available && slave_address!=j) {
-            delayMicroseconds(50000);
             send_command_switch_or_number_to_slave_int32(j,third_element_of_frame,register_address,value);
         }
     }
@@ -250,7 +252,6 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint16_event(std::uint8
   if (this->broadcast_changes_to_all_bms_==true){
     for (uint8_t j = 1; j < 16; ++j) {
         if (rs485_network_node[j].available && slave_address!=j) {
-            delayMicroseconds(50000);
             send_command_switch_or_number_to_slave_uint16(j,third_element_of_frame,register_address,value);
             rs485_network_node[j].last_device_info_request_received_OK=0;
         }
@@ -274,6 +275,45 @@ void JkRS485Sniffer::send_frame_(const uint8_t *frame, size_t size, uint8_t addr
   const uint32_t now=millis();
   this->rs485_network_node[address].last_request_sent=now;
   this->last_jk_rs485_network_activity_=now;
+}
+
+// Queues a write : it is sent by loop() once the bus is silent, instead of right away
+// from the number or switch control() call, which could collide with the bus traffic
+void JkRS485Sniffer::enqueue_write_(const uint8_t *frame, size_t size, uint8_t address) {
+  if (size > sizeof(PendingWrite::frame) || address > 15) {
+    ESP_LOGE(TAG, "Invalid write (address 0x%02X, %u bytes), ignoring", address, (unsigned) size);
+    return;
+  }
+  if (this->write_queue_.size() >= WRITE_QUEUE_MAX_SIZE) {
+    ESP_LOGW(TAG, "Write queue full (%u), write to address 0x%02X dropped", (unsigned) WRITE_QUEUE_MAX_SIZE, address);
+    return;
+  }
+
+  PendingWrite pending;
+  memcpy(pending.frame, frame, size);
+  pending.size = size;
+  pending.address = address;
+  this->write_queue_.push_back(pending);
+  ESP_LOGD(TAG, "Write to address 0x%02X queued (%u pending)", address, (unsigned) this->write_queue_.size());
+}
+
+// Sends the oldest pending pending. Returns true when a frame was sent
+bool JkRS485Sniffer::send_next_write_(void) {
+  while (!this->write_queue_.empty()) {
+    const PendingWrite pending = this->write_queue_.front();
+    this->write_queue_.pop_front();
+
+    if (!this->rs485_network_node[pending.address].available) {
+      ESP_LOGW(TAG, "Address 0x%02X no longer available, queued write dropped", pending.address);
+      continue;
+    }
+
+    ESP_LOGD(TAG, "Sending queued write to address 0x%02X (%u left)", pending.address,
+             (unsigned) this->write_queue_.size());
+    this->send_frame_(pending.frame, pending.size, pending.address);
+    return true;
+  }
+  return false;
 }
 
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint32_t value) {
@@ -305,7 +345,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch >>: %s",format_hex_pretty(frame, size).c_str());
-  this->send_frame_(frame, size, slave_address);
+  this->enqueue_write_(frame, size, slave_address);
 }
 
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint16_t value) {
@@ -332,7 +372,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t 
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-  this->send_frame_(frame, size, slave_address);
+  this->enqueue_write_(frame, size, slave_address);
 }
 
 void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::int32_t value) {
@@ -358,7 +398,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t s
 
 
   ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
-  this->send_frame_(frame, size, slave_address);
+  this->enqueue_write_(frame, size, slave_address);
 }
 
 
@@ -607,6 +647,13 @@ void JkRS485Sniffer::loop() {
     //NO RX DATA
     if ((now-this->last_jk_rs485_network_activity_)>MIN_SILENCE_NEEDED_BEFORE_SPEAKING_MILLISECONDS){
       //CAN TX REQUEST IF NEEDED
+
+      // Pending writes go first, in both modes : one frame per silence, the polling
+      // resumes once the queue is empty
+      if (this->send_next_write_()) {
+        return;
+      }
+
       if (now-last_master_activity>SILENCE_BEFORE_ACTING_AS_MASTER){
         if (this->act_as_master==false){
           //NO MASTER HAS BEEN DETECTED IN THE NETWORK --> ESP WILL ACT AS MASTER
@@ -618,8 +665,6 @@ void JkRS485Sniffer::loop() {
       
       if (this->act_as_master) {
         if (now-last_message_received_acting_as_master>SILENCE_BEFORE_REUSING_NETWORK_ACTING_AS_MASTER){
-          // Is an special message to send in the queue?
-          // if so, do it and return. TO DO!!!
           this->last_message_received_acting_as_master=now;      
           
           bool scan_sent=false;

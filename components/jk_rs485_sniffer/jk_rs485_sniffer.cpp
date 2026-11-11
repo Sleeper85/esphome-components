@@ -110,6 +110,12 @@ void JkRS485Sniffer::handle_bms2sniffer_event(std::uint8_t slave_address, std::s
   ESP_LOGD(TAG,"Received Event from BMS.. [address:0x%02X] @ %d -->  %s", slave_address, frame_type, event.c_str());
   const uint32_t now=millis();
 
+  // rs485_network_node[] has 16 slots (addresses 0x00 to 0x0F)
+  if (slave_address > 15) {
+    ESP_LOGE(TAG, "slave_address 0x%02X out of range (max 0x0F), ignoring", slave_address);
+    return;
+  }
+
   if (frame_type==1)
   {
     this->rs485_network_node[slave_address].last_device_settings_request_received_OK=now;  
@@ -145,6 +151,12 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint32_event(std::uint8
 
   // 02.10.10.00.00.02.04.00.00.0D.AC.35.C6 (13)
 
+  // rs485_network_node[] has 16 slots (addresses 0x00 to 0x0F)
+  if (slave_address > 15) {
+    ESP_LOGE(TAG, "slave_address 0x%02X out of range (max 0x0F), ignoring", slave_address);
+    return;
+  }
+
   if (rs485_network_node[slave_address].available) {
     send_command_switch_or_number_to_slave_uint32(slave_address,third_element_of_frame,register_address,value);
   }
@@ -172,6 +184,12 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_int32_event(std::uint8_
 
   // 02.10.10.78.00.02.04.00.00.00.00.37.A9
 
+  // rs485_network_node[] has 16 slots (addresses 0x00 to 0x0F)
+  if (slave_address > 15) {
+    ESP_LOGE(TAG, "slave_address 0x%02X out of range (max 0x0F), ignoring", slave_address);
+    return;
+  }
+
   if (rs485_network_node[slave_address].available) {
     send_command_switch_or_number_to_slave_int32(slave_address,third_element_of_frame,register_address,value);
   }
@@ -192,6 +210,12 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_int32_event(std::uint8_
 }
 
 void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint16_event(std::uint8_t slave_address, std::uint8_t third_element_of_frame, std::uint16_t register_address, std::uint16_t value) {
+
+  // rs485_network_node[] has 16 slots (addresses 0x00 to 0x0F)
+  if (slave_address > 15) {
+    ESP_LOGE(TAG, "slave_address 0x%02X out of range (max 0x0F), ignoring", slave_address);
+    return;
+  }
 
   if (rs485_network_node[slave_address].available) {
     send_command_switch_or_number_to_slave_uint16(slave_address,third_element_of_frame,register_address,value);
@@ -680,6 +704,12 @@ std::string JkRS485Sniffer::nodes_available_to_string() {
 }
 
 void JkRS485Sniffer::set_node_availability(uint8_t address,bool value){
+  // rs485_network_node[] has 16 slots (addresses 0x00 to 0x0F)
+  if (address > 15) {
+    ESP_LOGE(TAG, "address 0x%02X out of range (max 0x0F), ignoring", address);
+    return;
+  }
+
   if (this->rs485_network_node[address].available==value){
     //no changes
   } else {
@@ -847,7 +877,10 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
 
       return(10);
     } else {
-      this->rs485_network_node[address].last_message_received=now;
+      // The address is a raw byte from the wire, only range-checked below
+      if (address<=15){
+        this->rs485_network_node[address].last_message_received=now;
+      }
       if (address==0){
         last_master_activity=now;
       } else if (address>15){

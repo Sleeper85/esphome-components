@@ -117,6 +117,12 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
 
   std::vector<uint8_t> rx_buffer_;
   uint16_t rx_timeout_{50};
+  // Parser diagnostics, shown by dump_config()
+  uint32_t rx_short_checksum_fail_{0};
+  uint32_t rx_request_checksum_fail_{0};
+  uint32_t rx_response_checksum_fail_{0};
+  uint32_t rx_preamble_drop_{0};
+  uint32_t rx_frames_ok_{0};
   bool broadcast_changes_to_all_bms_{false};
   uint32_t last_jk_rs485_network_activity_{0};
   uint32_t last_jk_rs485_pooling_trial_{0};

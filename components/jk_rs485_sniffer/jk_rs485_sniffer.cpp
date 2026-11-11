@@ -750,12 +750,13 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
   const size_t preamble_index =
       preamble_found ? std::distance(this->rx_buffer_.begin(), preamble_it) : this->rx_buffer_.size();
 
-  // Short frame (8 bytes, no preamble), e.g. the answer of a BMS to a write
+  // Short Modbus frame (8 bytes : address, function, register, quantity, CRC), e.g. the
+  // answer of a BMS to a write. It can be followed by a response in the same buffer
   auto try_parse_short_request = [&]() -> bool {
     if (this->rx_buffer_.size() < short_size) {
       return false;
     }
-    if (preamble_found) {
+    if (preamble_found && preamble_index < short_size) {
       return false;
     }
 
@@ -772,8 +773,8 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
 
     address = raw[0];
     ESP_LOGD(TAG, "Answer received for MASTER (type: SHORT REQUEST for address %02X, %u bytes)", address,
-             (unsigned) (short_size - 1));
-    erase_prefix(short_size - 1);
+             (unsigned) short_size);
+    erase_prefix(short_size);
     result = RX_PARSED_SHORT;
     return true;
   };

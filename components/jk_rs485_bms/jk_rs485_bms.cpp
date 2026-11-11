@@ -544,6 +544,13 @@ void JkRS485Bms::decode_jk02_cell_info_(const std::vector<uint8_t> &data) {
     offset = 16;
   }
 
+  // Reject short frames before indexing into them
+  const size_t min_len = 228 + offset;
+  if (data.size() < min_len) {
+    ESP_LOGW(TAG, "Cell info frame too short (%u bytes, need >= %u), ignoring", (unsigned) data.size(), (unsigned) min_len);
+    return;
+  }
+
   ESP_LOGI(TAG, "Decoding cell info frame.... [ADDRESS: %02X] %d bytes received", this->address_, data.size());
   //ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), 150).c_str());
   //ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front() + 150, data.size() - 150).c_str());
@@ -1007,6 +1014,13 @@ void JkRS485Bms::decode_jk02_cell_info_(const std::vector<uint8_t> &data) {
 
 void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
 {
+  // Reject short frames before indexing into them
+  const size_t min_len = 287;
+  if (data.size() < min_len) {
+    ESP_LOGW(TAG, "Settings frame too short (%u bytes, need >= %u), ignoring", (unsigned) data.size(), (unsigned) min_len);
+    return;
+  }
+
   ESP_LOGI(TAG, "Decoding settings  frame.... [ADDRESS: %02X] %d bytes received", this->address_, data.size());
   // ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), 160).c_str());
   // ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front() + 160, data.size() - 160).c_str());
@@ -1360,6 +1374,13 @@ void JkRS485Bms::update() { this->track_status_online_(); }
 
 void JkRS485Bms::decode_device_info_(const std::vector<uint8_t> &data)
 {
+  // Reject short frames before indexing into them
+  const size_t min_len = 268;
+  if (data.size() < min_len) {
+    ESP_LOGW(TAG, "Device info frame too short (%u bytes, need >= %u), ignoring", (unsigned) data.size(), (unsigned) min_len);
+    return;
+  }
+
   ESP_LOGI(TAG, "Device info frame (%d bytes) received", data.size());
   ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), 160).c_str());
   ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front() + 160, data.size() - 160).c_str());

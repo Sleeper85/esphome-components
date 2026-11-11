@@ -1,5 +1,5 @@
-// Updated : 2026.07.12
-// Version : 1.1.2
+// Updated : 2026.11.11
+// Version : 1.2.0
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -675,7 +675,6 @@ std::string JkRS485Sniffer::nodes_available_to_string() {
         }
     }
     
-    bufferHex.push_back('\0'); // Agregar el carácter nulo al final de la cadena
     this->nodes_available_number=number_of_nodes_available;
     return bufferHex;
 }

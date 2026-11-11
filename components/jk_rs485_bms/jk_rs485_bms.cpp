@@ -627,6 +627,7 @@ void JkRS485Bms::decode_jk02_cell_info_(const std::vector<uint8_t> &data) {
   uint8_t cells_from_settings = (this->cell_count_settings_number_ != nullptr) ? (uint8_t) this->cell_count_settings_number_->state : 0;
 
   if (cells_from_settings>0) cells=cells_from_settings;
+  if (cells>32) cells=32; // size of cells_[]
 
   for (uint8_t i = 0; i < cells; i++)
   {

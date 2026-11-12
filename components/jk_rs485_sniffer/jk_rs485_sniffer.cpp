@@ -1,5 +1,5 @@
 // Updated : 2026.11.12
-// Version : 1.2.3
+// Version : 1.2.4
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -202,7 +202,15 @@ void JkRS485Sniffer::handle_bms2sniffer_switch_or_number_uint32_event(std::uint8
     send_command_switch_or_number_to_slave_uint32(slave_address,third_element_of_frame,register_address,value);
   }
 
-  if (this->broadcast_changes_to_all_bms_==true){
+  // The charging (0x1070) and discharging (0x1074) switches are never broadcast : with batteries
+  // in parallel, one click would stop charging or discharging on the whole bank
+  const bool never_broadcast =
+      third_element_of_frame == 0x10 && (register_address == 0x0070 || register_address == 0x0074);
+  if (this->broadcast_changes_to_all_bms_ && never_broadcast) {
+    ESP_LOGI(TAG, "Charging / discharging switch of address 0x%02X written to this BMS only, not broadcast", slave_address);
+  }
+
+  if (this->broadcast_changes_to_all_bms_==true && !never_broadcast){
     for (uint8_t j = 1; j < 16; ++j) {
         if (rs485_network_node[j].available && slave_address!=j) {
             send_command_switch_or_number_to_slave_uint32(j,third_element_of_frame,register_address,value);

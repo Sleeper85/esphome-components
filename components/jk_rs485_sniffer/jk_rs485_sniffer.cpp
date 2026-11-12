@@ -1,5 +1,5 @@
-// Updated : 2026.11.11
-// Version : 1.2.2
+// Updated : 2026.11.12
+// Version : 1.2.3
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -700,17 +700,19 @@ void JkRS485Sniffer::loop() {
 
       } else {
         //SPEAK WHEN A MASTER IS IN THE NETWORK
-        for (uint8_t cont=0;cont<16;cont++){
-          if (this->rs485_network_node[cont].available==true){
-            //repeat device info request
-            if (now-rs485_network_node[cont].last_device_info_request_received_OK>TIME_BETWEEN_DEVICE_INFO_REQUESTS_MILLISECONDS){
-
-              send_request_to_slave(cont,03);
-
-
-              break;
-            }
-
+        // The master never asks for the device info frame : request it from each slave that has
+        // never sent it, then once an hour. The master itself (0x00) does not answer this request,
+        // so the search starts at 0x01, and it rotates so that a silent slave cannot block the others
+        for (uint8_t i = 0; i < 15; i++) {
+          const uint8_t cont = 1 + (this->device_info_index_ + i) % 15;
+          const struct_rs485_network_node &node = this->rs485_network_node[cont];
+          if (!node.available) continue;
+          if (now - node.last_request_sent < TIME_BETWEEN_CONSECUTIVE_REQUEST_SENDINGS_TO_SAME_SLAVE) continue;
+          if (node.last_device_info_request_received_OK == 0 ||
+              now - node.last_device_info_request_received_OK > TIME_BETWEEN_DEVICE_INFO_REQUESTS_MILLISECONDS) {
+            this->send_request_to_slave(cont, 03);
+            this->device_info_index_ = cont;
+            break;
           }
         }
 
@@ -718,13 +720,6 @@ void JkRS485Sniffer::loop() {
         for (uint8_t cont=0;cont<16;cont++){
           if (now-this->rs485_network_node[cont].last_message_received>NO_MESSAGE_RECEIVED_TIME_SET_AS_UNAVAILABLE_MILLISECONDS){
             this->set_node_availability(cont,0);
-          }
-
-          //periodically test !!!!!!
-          if (this->rs485_network_node[cont].available && cont>0){
-            if (this->rs485_network_node[cont].counter_device_info_received==0){
-              this->rs485_network_node[cont].last_device_info_request_received_OK=0;
-            }                
           }
         }
       }

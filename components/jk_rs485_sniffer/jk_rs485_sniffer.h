@@ -1,5 +1,5 @@
-// Updated : 2026.11.11
-// Version : 1.2.2
+// Updated : 2026.11.12
+// Version : 1.2.3
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -106,6 +106,7 @@ class JkRS485Sniffer : public uart::UARTDevice, public Component {
   uint32_t last_master_activity;
   uint32_t last_message_received_acting_as_master;
   uint32_t last_network_scan;
+  uint8_t device_info_index_{0};   // Mode 1 : last slave sent a device info request, the next search starts after it
 
 
   uint8_t manage_rx_buffer_(void);

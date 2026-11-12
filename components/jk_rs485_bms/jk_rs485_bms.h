@@ -1,5 +1,5 @@
 // Updated : 2026.11.12
-// Version : 1.2.1
+// Version : 1.2.2
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -464,6 +464,7 @@ class JkRS485Bms : public PollingComponent, public jk_rs485_sniffer::JkRS485Snif
   uint8_t no_response_count_{0};
   // Set once the frame holding the values of the grouped registers has been decoded
   bool settings_frame_received_{false};
+  uint16_t switches_register_raw_{0};   // register 0x1114 as last read from the BMS
   bool device_info_frame_received_{false};
 
   void publish_state_(binary_sensor::BinarySensor *binary_sensor, const bool &state);

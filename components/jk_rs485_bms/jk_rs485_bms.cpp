@@ -208,46 +208,43 @@ void JkRS485Bms::trigger_bms2sniffer_switch16_event(std::uint16_t register_addre
       return;
   }
 
-  uint16_t value_to_send=0;
-
-  // The 10 switches share one register : it is rewritten as a whole from the local states,
-  // which are only valid once the settings frame has been decoded
+  // The 10 switches share one register, which is rewritten as a whole. Start from its value
+  // as last read from the BMS, so it is only valid once the settings frame has been decoded
   if (!this->settings_frame_received_)
   {
     ESP_LOGW(TAG, "BMS address %02X : switch not written, settings frame not received yet", this->address_);
     return;
   }
 
-  if (
-    (this->heating_switch_ != nullptr) && (this->heating_switch_->is_ready()) &&
-    (this->disable_temperature_sensors_switch_ != nullptr) && (this->disable_temperature_sensors_switch_->is_ready()) &&
-    (this->gps_heartbeat_switch_ != nullptr) && (this->gps_heartbeat_switch_->is_ready()) &&
-    (this->port_selection_switch_ != nullptr) && (this->port_selection_switch_->is_ready()) &&
-    (this->display_always_on_switch_ != nullptr) && (this->display_always_on_switch_->is_ready()) &&
-    (this->special_charger_switch_ != nullptr) && (this->special_charger_switch_->is_ready()) &&
-    (this->smart_sleep_on_switch_ != nullptr) && (this->smart_sleep_on_switch_->is_ready()) &&
-    (this->disable_pcl_module_switch_ != nullptr) && (this->disable_pcl_module_switch_->is_ready()) &&
-    (this->timed_stored_data_switch_ != nullptr) && (this->timed_stored_data_switch_->is_ready()) &&
-    (this->charging_float_mode_switch_ != nullptr) && (this->charging_float_mode_switch_->is_ready()) 
-  ) {
-    value_to_send = this->charging_float_mode_switch_->state;
-    value_to_send = (value_to_send << 1) | this->timed_stored_data_switch_->state;
-    value_to_send = (value_to_send << 1) | this->disable_pcl_module_switch_->state;
-    value_to_send = (value_to_send << 1) | this->smart_sleep_on_switch_->state;
-    value_to_send = (value_to_send << 1) | this->special_charger_switch_->state;
-    value_to_send = (value_to_send << 1) | this->display_always_on_switch_->state;
-    value_to_send = (value_to_send << 1) | this->port_selection_switch_->state;
-    value_to_send = (value_to_send << 1) | this->gps_heartbeat_switch_->state;
-    value_to_send = (value_to_send << 1) | this->disable_temperature_sensors_switch_->state;
-    value_to_send = (value_to_send << 1) | this->heating_switch_->state;
+  // Bit order of register 0x1114. Only the declared switches change their bit : the others,
+  // including the bits of functions that a BMS model does not have, keep the value read from the BMS
+  JkRS485BmsSwitch *const switches[10] = {
+    this->heating_switch_,                       // bit 0
+    this->disable_temperature_sensors_switch_,   // bit 1
+    this->gps_heartbeat_switch_,                 // bit 2
+    this->port_selection_switch_,                // bit 3
+    this->display_always_on_switch_,             // bit 4
+    this->special_charger_switch_,               // bit 5
+    this->smart_sleep_on_switch_,                // bit 6
+    this->disable_pcl_module_switch_,            // bit 7
+    this->timed_stored_data_switch_,             // bit 8
+    this->charging_float_mode_switch_,           // bit 9
+  };
 
-    ESP_LOGD(TAG, "BMS address %02X switch_register_address [16bit] %02X", this->address_, register_address);
-    this->parent_->handle_bms2sniffer_switch_or_number_uint16_event(this->address_, third_element_of_frame, register_address, value_to_send);
+  uint16_t value_to_send = this->switches_register_raw_;
+  for (uint8_t bit = 0; bit < 10; bit++) {
+    if (switches[bit] == nullptr) continue;
+    if (switches[bit]->state) {
+      value_to_send |= (uint16_t) (1 << bit);
+    } else {
+      value_to_send &= (uint16_t) ~(1 << bit);
+    }
   }
-  else
-  {
-    ESP_LOGD(TAG, "BMS address %02X switch_register_address [16bit] %02X (NOT READY ALL SWITCHES)", this->address_, register_address);
-  }
+  // A second switch toggled before the next settings frame builds on this value
+  this->switches_register_raw_ = value_to_send;
+
+  ESP_LOGD(TAG, "BMS address %02X switch_register_address [16bit] %02X value 0x%04X", this->address_, register_address, value_to_send);
+  this->parent_->handle_bms2sniffer_switch_or_number_uint16_event(this->address_, third_element_of_frame, register_address, value_to_send);
 }
 
 void JkRS485Bms::trigger_bms2sniffer_number16_event(std::uint16_t register_address, std::uint8_t third_element_of_frame)
@@ -1006,6 +1003,8 @@ void JkRS485Bms::decode_jk02_settings_(const std::vector<uint8_t> &data)
   //    bit6: SMART_SLEEP_ON_SWITCH_ENABLED          64
   //    bit7: disable_pcl_module_switch_ENABLED      128
   bool value_tmp;
+
+  this->switches_register_raw_ = (uint16_t) data[282] | ((uint16_t) data[283] << 8);
 
   value_tmp=this->check_bit_of_byte_(data[282], 0); 
   ESP_LOGV(TAG, "[0x%02X]* heating_switch_                      is bit 0 of 0x%02X is %02X address %p",this->address_,data[282],value_tmp,(void *) this->heating_switch_);    

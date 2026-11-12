@@ -1,5 +1,5 @@
 // Updated : 2026.11.12
-// Version : 1.2.2
+// Version : 1.2.3
 // GitHub  : https://github.com/Sleeper85/esphome-components
 
 // This YAML is free software: you can redistribute it and/or
@@ -16,6 +16,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/gpl.html>.
 
 #include "jk_rs485_bms.h"
+
+#include <cstring>
 
 float uint32_to_float(const uint8_t* byteArray)
 {
@@ -112,6 +114,16 @@ void JkRS485Bms::set_cell_request_charge_voltage_time_number(JkRS485BmsNumber *c
 void JkRS485Bms::set_cell_request_float_voltage_time_number(JkRS485BmsNumber *cell_request_float_voltage_time_number)   { this->cell_request_float_voltage_time_number_ = cell_request_float_voltage_time_number; }
 
 static const char *const TAG = "jk_rs485_bms";
+
+// Hex dump for the logs. format_hex_pretty(), which returned a std::string, was removed in
+// ESPHome 2026.11 : format_hex_pretty_to() exists in 2026.10 and 2026.11
+static inline std::string hex_dump(const uint8_t *data, size_t length) {
+  if (data == nullptr || length == 0) return std::string();
+  std::string out(format_hex_pretty_size(length), '\0');
+  format_hex_pretty_to(&out[0], out.size(), data, length, '.');
+  out.resize(strlen(out.c_str()));
+  return out;
+}
 static const uint8_t MAX_NO_RESPONSE_COUNT = 10;
 static const uint8_t ERRORS_SIZE = 24;
 
@@ -320,7 +332,7 @@ void JkRS485Bms::on_jk_rs485_sniffer_data(const uint8_t &origin_address, const u
         break;
       default:
         ESP_LOGW(TAG, "Unsupported FRAME TYPE (0x%02X)", frame_type);
-        ESP_LOGD(TAG, "  %s", format_hex_pretty(&data.front(), 150).c_str());
+        ESP_LOGD(TAG, "  %s", hex_dump(&data.front(), 150).c_str());
     }
 
     if (this->cell_count_real_sensor_ != nullptr && this->cell_count_settings_number_ != nullptr &&
@@ -1076,8 +1088,8 @@ void JkRS485Bms::decode_device_info_(const std::vector<uint8_t> &data)
   }
 
   ESP_LOGI(TAG, "Device info frame (%d bytes) received", data.size());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), 160).c_str());
-  ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front() + 160, data.size() - 160).c_str());
+  ESP_LOGVV(TAG, "  %s", hex_dump(&data.front(), 160).c_str());
+  ESP_LOGVV(TAG, "  %s", hex_dump(&data.front() + 160, data.size() - 160).c_str());
 
   // Byte Len  Content
   // 6    16   Vendor ID

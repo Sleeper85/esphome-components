@@ -25,6 +25,16 @@ namespace jk_rs485_sniffer {
 
 static const char *const TAG = "jk_rs485_sniffer";
 
+// Hex dump for the logs. format_hex_pretty(), which returned a std::string, was removed in
+// ESPHome 2026.11 : format_hex_pretty_to() exists in 2026.10 and 2026.11
+static inline std::string hex_dump(const uint8_t *data, size_t length) {
+  if (data == nullptr || length == 0) return std::string();
+  std::string out(format_hex_pretty_size(length), '\0');
+  format_hex_pretty_to(&out[0], out.size(), data, length, '.');
+  out.resize(strlen(out.c_str()));
+  return out;
+}
+
 static const uint16_t JKPB_RS485_MASTER_SHORT_REQUEST_SIZE = 8;
 static const uint16_t JKPB_RS485_MASTER_REQUEST_SIZE = 11;
 static const uint16_t JKPB_RS485_RESPONSE_SIZE = 308;
@@ -344,7 +354,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint32(std::uint8_t 
   frame[12] = ((computed_checksum & 0x00FF)>>0);
 
 
-  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch >>: %s",format_hex_pretty(frame, size).c_str());
+  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch >>: %s",hex_dump(frame, size).c_str());
   this->enqueue_write_(frame, size, slave_address);
 }
 
@@ -371,7 +381,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_uint16(std::uint8_t 
      
 
 
-  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
+  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",hex_dump(frame, size).c_str());
   this->enqueue_write_(frame, size, slave_address);
 }
 
@@ -397,7 +407,7 @@ void JkRS485Sniffer::send_command_switch_or_number_to_slave_int32(std::uint8_t s
   frame[12] = ((computed_checksum & 0x00FF)>>0);
 
 
-  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",format_hex_pretty(frame, size).c_str());
+  ESP_LOGD(TAG, "MESSAGE REQUEST TO SEND switch or number >>: %s",hex_dump(frame, size).c_str());
   this->enqueue_write_(frame, size, slave_address);
 }
 
@@ -441,7 +451,7 @@ void JkRS485Sniffer::send_request_to_slave(uint8_t address, uint8_t frame_type)
       node.last_poll_sent = millis();
     }
 
-    ESP_LOGV(TAG, "MESSAGE REQUEST TO SEND>>: %s",format_hex_pretty(frame, 11).c_str());
+    ESP_LOGV(TAG, "MESSAGE REQUEST TO SEND>>: %s",hex_dump(frame, 11).c_str());
     this->send_frame_(frame, sizeof(frame), address);
 }
 
@@ -628,7 +638,7 @@ void JkRS485Sniffer::loop() {
 
     do {
         cont_manage++;
-        ESP_LOGV(TAG, "Buffer before number %d:    %s",cont_manage,format_hex_pretty(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  
+        ESP_LOGV(TAG, "Buffer before number %d:    %s",cont_manage,hex_dump(&this->rx_buffer_.front(), this->rx_buffer_.size()).c_str());  
         response=this->manage_rx_buffer_();
         ESP_LOGV(TAG, "Response:            %d (%s)",response, rx_result_to_string(response));
         if (original_buffer_size==rx_buffer_.size()){
@@ -942,7 +952,7 @@ uint8_t JkRS485Sniffer::manage_rx_buffer_(void) {
     std::vector<uint8_t> data(this->rx_buffer_.begin(), this->rx_buffer_.begin() + response_size);
     this->rx_frames_ok_++;
     ESP_LOGD(TAG, "Frame received from SLAVE (type: 0x%02X, %u bytes) %02X address", raw[4], (unsigned) data.size(), address);
-    ESP_LOGVV(TAG, "  %s", format_hex_pretty(&data.front(), data.size()).c_str());
+    ESP_LOGVV(TAG, "  %s", hex_dump(&data.front(), data.size()).c_str());
 
     bool found = false;
     for (auto *device : this->devices_) {
